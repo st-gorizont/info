@@ -196,7 +196,9 @@ function applyArticles() {
 const TELEGRAM_TOKEN = '358296869:AAGfM7zpZsl8oSVnXWrF_AMzDPwN9zgsOSk';
 const TELEGRAM_CHAT = '-1002649665529';
 
-const defaultPages = [];
+const defaultPages = [
+  { title: 'Home', url: 'index', blocks: [{ type: 'posts' }] }
+];
 
 async function getPages() {
   try {
@@ -301,6 +303,95 @@ async function applyPage(url) {
           node.appendChild(a);
         });
         container.appendChild(node);
+        break;
+      case 'posts':
+        node = document.createElement('div');
+        const posts = getArticles();
+        let postsRendered = 0;
+        const postsBatch = 6;
+        function renderPosts() {
+          const next = Math.min(postsRendered + postsBatch, posts.length);
+          for (let i = postsRendered; i < next; i++) {
+            const article = posts[i];
+            const link = document.createElement('a');
+            link.href = `post.html?id=${i}`;
+
+            const art = document.createElement('article');
+            const img = document.createElement('img');
+            img.src = article.img;
+            img.alt = article.title;
+            art.appendChild(img);
+
+            const category = document.createElement('p');
+            category.className = 'ubuntu';
+            category.textContent = article.category;
+            art.appendChild(category);
+
+            const title = document.createElement('h2');
+            title.className = 'h1__font';
+            title.textContent = article.title;
+            art.appendChild(title);
+
+            const text = document.createElement('p');
+            text.className = 'p__text';
+            text.textContent = article.text;
+            art.appendChild(text);
+
+            link.appendChild(art);
+            node.appendChild(link);
+          }
+          postsRendered = next;
+          if (postsRendered >= posts.length && postsBtn) {
+            postsBtn.style.display = 'none';
+          }
+        }
+        const postsBtn = document.createElement('button');
+        postsBtn.textContent = 'Show more';
+        postsBtn.addEventListener('click', e => { e.preventDefault(); renderPosts(); });
+        renderPosts();
+        container.appendChild(node);
+        container.appendChild(postsBtn);
+        break;
+      case 'rss':
+        node = document.createElement('div');
+        const list = document.createElement('ul');
+        node.appendChild(list);
+        container.appendChild(node);
+        const rssBtn = document.createElement('button');
+        rssBtn.textContent = 'Show more';
+        rssBtn.style.display = 'none';
+        container.appendChild(rssBtn);
+        fetch(block.url).then(res => res.text()).then(str => {
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(str, 'application/xml');
+          const items = Array.from(xml.querySelectorAll('item'));
+          let rendered = 0;
+          const batch = 6;
+          function renderBatch() {
+            const next = Math.min(rendered + batch, items.length);
+            for (let i = rendered; i < next; i++) {
+              const it = items[i];
+              const li = document.createElement('li');
+              const a = document.createElement('a');
+              const linkEl = it.querySelector('link');
+              const titleEl = it.querySelector('title');
+              a.href = linkEl ? linkEl.textContent : '#';
+              a.textContent = titleEl ? titleEl.textContent : '';
+              li.appendChild(a);
+              list.appendChild(li);
+            }
+            rendered = next;
+            if (rendered >= items.length) {
+              rssBtn.style.display = 'none';
+            }
+          }
+          rssBtn.style.display = items.length > 0 ? 'inline' : 'none';
+          rssBtn.addEventListener('click', e => { e.preventDefault(); renderBatch(); });
+          renderBatch();
+        }).catch(() => {
+          node.textContent = 'Failed to load feed';
+          rssBtn.style.display = 'none';
+        });
         break;
       default:
         break;

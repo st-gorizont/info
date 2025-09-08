@@ -17,18 +17,13 @@
             <ul></ul>
         </nav>
     </header>
-    <main id="articles" class="main"></main>
-    <footer>
-        <div class="button">
-            <a id="loadMore" href="#">Load more</a>
-        </div>
-    </footer>
+    <main id="pageContent" class="main"></main>
     <script src="js/data.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             applyBanner('#banner');
             applyMenu('.menu ul');
-            applyArticles();
+            applyPage('index');
 
             var burger = document.querySelector('.burger');
             var menu = document.querySelector('.menu');
