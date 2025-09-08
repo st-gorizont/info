@@ -1,20 +1,54 @@
-document.getElementById('addBlockBtn').addEventListener('click', function () {
-  var type = document.getElementById('blockType').value;
-  if (!type) return;
+var editIndex = null;
+
+function addBlock(type, data) {
   var container = document.getElementById('blocks');
   var div = document.createElement('div');
   div.className = 'block';
   div.dataset.type = type;
   if (type === 'gallery') {
     div.innerHTML = '<h3>Gallery</h3><textarea placeholder="Image URLs (one per line)"></textarea>';
+    if (data && data.images) {
+      div.querySelector('textarea').value = data.images.join('\n');
+    }
   } else if (type === 'text') {
     div.innerHTML = '<h3>Text</h3><input type="text" placeholder="Title"><textarea placeholder="Text"></textarea>';
+    if (data) {
+      var inputs = div.querySelectorAll('input, textarea');
+      inputs[0].value = data.title || '';
+      inputs[1].value = data.text || '';
+    }
   } else if (type === 'form') {
     div.innerHTML = '<h3>Form</h3><p>Form will include name, phone and email fields.</p>';
   } else if (type === 'social') {
-    div.innerHTML = '<h3>Social Links</h3><textarea placeholder="[{\"img\":\"url\",\"name\":\"Name\",\"link\":\"#\"}]\n(one JSON object per line)"></textarea>';
+    div.innerHTML = '<h3>Social Links</h3><textarea placeholder="[{\\"img\\":\\"url\\",\\"name\\":\\"Name\\",\\"link\\":\\"#\\"}]\\n(one JSON object per line)"></textarea>';
+    if (data && data.items) {
+      div.querySelector('textarea').value = data.items.map(function (it) { return JSON.stringify(it); }).join('\n');
+    }
   }
+  var rm = document.createElement('button');
+  rm.type = 'button';
+  rm.textContent = 'Remove';
+  rm.addEventListener('click', function () { div.remove(); });
+  div.appendChild(rm);
   container.appendChild(div);
+}
+
+var params = new URLSearchParams(window.location.search);
+if (params.has('index')) {
+  editIndex = Number(params.get('index'));
+  var pages = getPages();
+  var page = pages[editIndex];
+  if (page) {
+    document.getElementById('pageTitle').value = page.title;
+    document.getElementById('pageUrl').value = page.url;
+    (page.blocks || []).forEach(function (b) { addBlock(b.type, b); });
+  }
+}
+
+document.getElementById('addBlockBtn').addEventListener('click', function () {
+  var type = document.getElementById('blockType').value;
+  if (!type) return;
+  addBlock(type);
 });
 
 document.getElementById('pageForm').addEventListener('submit', function (e) {
@@ -42,7 +76,11 @@ document.getElementById('pageForm').addEventListener('submit', function (e) {
     return null;
   }).filter(Boolean);
   var pages = getPages();
-  pages.push({ title: title, url: url, blocks: blocks });
+  if (editIndex !== null && pages[editIndex]) {
+    pages[editIndex] = { title: title, url: url, blocks: blocks };
+  } else {
+    pages.push({ title: title, url: url, blocks: blocks });
+  }
   setPages(pages);
   alert('Page saved');
   location.href = 'index.html';

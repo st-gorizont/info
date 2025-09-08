@@ -71,12 +71,23 @@ function renderPages() {
   var term = document.getElementById('pageSearch').value.toLowerCase();
   var pages = getPages();
   list.innerHTML = '';
-  pages.filter(function (p) { return p.title.toLowerCase().includes(term); })
-    .forEach(function (p) {
-      var li = document.createElement('li');
-      li.textContent = p.title + ' (' + p.url + ')';
-      list.appendChild(li);
+  pages.forEach(function (p, idx) {
+    if (!p.title.toLowerCase().includes(term)) return;
+    var li = document.createElement('li');
+    var view = document.createElement('a');
+    view.textContent = p.title + ' (' + p.url + ')';
+    view.href = '../page.html?url=' + encodeURIComponent(p.url);
+    view.target = '_blank';
+    li.appendChild(view);
+    var edit = document.createElement('button');
+    edit.type = 'button';
+    edit.textContent = 'Edit';
+    edit.addEventListener('click', function () {
+      location.href = 'page-builder.html?index=' + idx;
     });
+    li.appendChild(edit);
+    list.appendChild(li);
+  });
 }
 
 document.getElementById('pageSearch').addEventListener('input', renderPages);
