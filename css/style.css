@@ -18,6 +18,52 @@
   margin-top:30px;
   font-family:'Playfair Display', serif;
   color:#626262;
+ codex-6zr2ci
+  font-size:30px;
+}
+
+.p__text{
+  margin-top:40px;
+  font-family:'Playfair Display', serif;
+  color:#626262;
+  font-size:14px;
+  line-height:25px;
+}
+
+body{
+  max-width:960px;
+  width:90%;
+  margin:0 auto;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:40px auto 0;
+}
+
+.logo img{
+  max-height:60px;
+}
+
+.menu{
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-size:14px;
+  text-transform:uppercase;
+}
+
+.menu ul{
+  display:flex;
+  gap:40px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.menu a:hover{
+  color:blue;
+=======
   font-style:30px;
 }
 
@@ -58,6 +104,7 @@ header{
   font-family:Verdana, Geneva, Tahoma, sans-serif;
   font-size:14px;
   text-transform:uppercase;
+ master
 }
 
 .main{
@@ -90,7 +137,11 @@ a{
   margin:0 auto 70px;
   text-align:center;
   font-family:'Playfair Display', serif;
+ codex-6zr2ci
+  font-size:14px;
+=======
   font-style:14px;
+ master
 }
 
 .button > a{
@@ -101,9 +152,20 @@ a{
 }
 
 @media (max-width:600px){
+ codex-6zr2ci
+  header{
+    flex-direction:column;
+    gap:20px;
+  }
   .menu ul{
     flex-direction:column;
     align-items:center;
+    gap:10px;
+=======
+  .menu ul{
+    flex-direction:column;
+    align-items:center;
+ master
   }
   .menu li{
     margin-bottom:10px;
