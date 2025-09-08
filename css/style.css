@@ -103,6 +103,10 @@ a{
   color:#626262;
 }
 
+main a{
+  display:block;
+}
+
 .button{
   width:160px;
   height:60px;

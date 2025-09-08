@@ -26,21 +26,38 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     var articlesForm = document.getElementById('articlesForm');
     articlesForm.innerHTML = '';
     var articles = getArticles();
-    articles.forEach(function (art, idx) {
+
+    function createFieldset(art, idx) {
       var fs = document.createElement('fieldset');
       var legend = document.createElement('legend');
       legend.textContent = 'Article ' + (idx + 1);
       fs.appendChild(legend);
-      fs.innerHTML += '<input type="text" placeholder="Image URL" value="' + art.img + '">' +
-        '<input type="text" placeholder="Category" value="' + art.category + '">' +
-        '<input type="text" placeholder="Title" value="' + art.title + '">' +
-        '<textarea placeholder="Text">' + art.text + '</textarea>';
-      articlesForm.appendChild(fs);
+      fs.innerHTML += '<input type="text" placeholder="Image URL" value="' + (art.img || '') + '">' +
+        '<input type="text" placeholder="Category" value="' + (art.category || '') + '">' +
+        '<input type="text" placeholder="Title" value="' + (art.title || '') + '">' +
+        '<textarea placeholder="Text">' + (art.text || '') + '</textarea>' +
+        '<input type="hidden" class="article-date" value="' + (art.date || '') + '">';
+      return fs;
+    }
+
+    articles.forEach(function (art, idx) {
+      articlesForm.appendChild(createFieldset(art, idx));
     });
+
+    var addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.textContent = 'Add Article';
+    articlesForm.appendChild(addBtn);
+
     var artSave = document.createElement('button');
     artSave.type = 'submit';
     artSave.textContent = 'Save Articles';
     articlesForm.appendChild(artSave);
+
+    addBtn.addEventListener('click', function () {
+      var idx = articlesForm.querySelectorAll('fieldset').length;
+      articlesForm.insertBefore(createFieldset({}, idx), addBtn);
+    });
   } else {
     document.getElementById('loginError').style.display = 'block';
   }
@@ -75,11 +92,14 @@ document.getElementById('articlesForm').addEventListener('submit', function (e) 
   var articles = Array.from(sets).map(function (fs) {
     var inputs = fs.querySelectorAll('input');
     var textarea = fs.querySelector('textarea');
+    var dateInput = fs.querySelector('.article-date');
+    var date = dateInput.value ? Number(dateInput.value) : Date.now();
     return {
       img: inputs[0].value.trim(),
       category: inputs[1].value.trim(),
       title: inputs[2].value.trim(),
-      text: textarea.value.trim()
+      text: textarea.value.trim(),
+      date: date
     };
   });
   setArticles(articles);
