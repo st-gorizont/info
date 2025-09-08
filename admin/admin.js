@@ -4,15 +4,15 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
   var pass = document.getElementById('password').value;
   if (user === 'admin' && pass === 'vider') {
     document.getElementById('login').style.display = 'none';
-    document.getElementById('editor').style.display = 'block';
+    var admin = document.getElementById('admin');
+    admin.classList.add('active');
 
     document.getElementById('logoUrl').value = getLogo();
     document.getElementById('bannerUrl').value = getBanner();
 
     var menuForm = document.getElementById('menuForm');
     menuForm.innerHTML = '';
-    var menu = getMenu();
-    menu.forEach(function (item) {
+    getMenu().forEach(function (item) {
       var div = document.createElement('div');
       div.innerHTML = '<input type="text" placeholder="Name" value="' + item.name + '"> ' +
         '<input type="text" placeholder="URL" value="' + item.url + '">';
@@ -58,9 +58,39 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
       var idx = articlesForm.querySelectorAll('fieldset').length;
       articlesForm.insertBefore(createFieldset({}, idx), addBtn);
     });
+
+    renderPages();
+    document.querySelector('#sidebar li').click();
   } else {
     document.getElementById('loginError').style.display = 'block';
   }
+});
+
+function renderPages() {
+  var list = document.getElementById('pagesList');
+  var term = document.getElementById('pageSearch').value.toLowerCase();
+  var pages = getPages();
+  list.innerHTML = '';
+  pages.filter(function (p) { return p.title.toLowerCase().includes(term); })
+    .forEach(function (p) {
+      var li = document.createElement('li');
+      li.textContent = p.title + ' (' + p.url + ')';
+      list.appendChild(li);
+    });
+}
+
+document.getElementById('pageSearch').addEventListener('input', renderPages);
+document.getElementById('addPageBtn').addEventListener('click', function () {
+  location.href = 'page-builder.html';
+});
+
+var tabs = document.querySelectorAll('#sidebar li');
+tabs.forEach(function (li) {
+  li.addEventListener('click', function () {
+    document.querySelectorAll('.tab').forEach(function (t) { t.style.display = 'none'; });
+    var active = document.getElementById('tab-' + li.dataset.tab);
+    if (active) active.style.display = 'block';
+  });
 });
 
 document.getElementById('logoForm').addEventListener('submit', function (e) {
@@ -81,7 +111,7 @@ document.getElementById('menuForm').addEventListener('submit', function (e) {
   var menu = Array.from(rows).map(function (row) {
     var inputs = row.querySelectorAll('input');
     return { name: inputs[0].value.trim(), url: inputs[1].value.trim() };
-    });
+  });
   setMenu(menu);
   alert('Menu saved');
 });
@@ -105,3 +135,4 @@ document.getElementById('articlesForm').addEventListener('submit', function (e) 
   setArticles(articles);
   alert('Articles saved');
 });
+
