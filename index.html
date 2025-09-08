@@ -11,7 +11,9 @@
 
 <body>
     <header>
+        <img id="banner" src="img/image1.jpg" alt="Banner">
         <img id="logo" src="img/Livello 7.jpg" alt="Logo">
+        <div class="burger">&#9776;</div>
         <nav class="menu">
             <ul>
                 <li><a href="#">lifestyle</a></li>
@@ -67,9 +69,16 @@
     <script src="js/data.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            applyBanner('#banner');
             applyLogo('#logo');
             applyMenu('.menu a');
             applyArticles();
+
+            var burger = document.querySelector('.burger');
+            var menu = document.querySelector('.menu');
+            burger.addEventListener('click', function () {
+                menu.classList.toggle('active');
+            });
         });
     </script>
 </body>

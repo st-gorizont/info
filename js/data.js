@@ -49,6 +49,23 @@ function applyLogo(selector) {
   }
 }
 
+const defaultBanner = 'img/image1.jpg';
+
+function getBanner() {
+  return localStorage.getItem('banner') || defaultBanner;
+}
+
+function setBanner(src) {
+  localStorage.setItem('banner', src);
+}
+
+function applyBanner(selector) {
+  const img = document.querySelector(selector);
+  if (img) {
+    img.src = getBanner();
+  }
+}
+
 const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris';
 
 const defaultArticles = [
