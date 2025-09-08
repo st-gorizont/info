@@ -201,15 +201,22 @@ const defaultPages = [
 ];
 
 async function getPages() {
+  let pages;
   try {
     const stored = localStorage.getItem('pages');
     if (stored) {
-      return JSON.parse(stored);
+      pages = JSON.parse(stored);
     }
   } catch (e) {
     console.error('Failed to parse pages', e);
   }
-  return defaultPages;
+  if (!Array.isArray(pages)) {
+    pages = defaultPages.slice();
+  }
+  if (!pages.some(p => p.url === 'index')) {
+    pages.unshift({ title: 'Home', url: 'index', blocks: [{ type: 'posts' }] });
+  }
+  return pages;
 }
 
 async function setPages(pages) {
@@ -355,8 +362,7 @@ async function applyPage(url) {
         break;
       case 'rss':
         node = document.createElement('div');
-        const list = document.createElement('ul');
-        node.appendChild(list);
+        node.className = 'posts-grid';
         container.appendChild(node);
         const rssBtn = document.createElement('button');
         rssBtn.textContent = 'Show more';
@@ -378,14 +384,45 @@ async function applyPage(url) {
             const next = Math.min(rendered + batch, items.length);
             for (let i = rendered; i < next; i++) {
               const it = items[i];
-              const li = document.createElement('li');
-              const a = document.createElement('a');
               const linkEl = it.querySelector('link');
               const titleEl = it.querySelector('title');
+              const descEl = it.querySelector('description');
+              let imgUrl = '';
+              const enc = it.querySelector('enclosure');
+              if (enc && enc.getAttribute('url')) {
+                imgUrl = enc.getAttribute('url');
+              } else if (descEl) {
+                try {
+                  const dp = new DOMParser();
+                  const html = dp.parseFromString(descEl.textContent, 'text/html');
+                  const imgTag = html.querySelector('img');
+                  if (imgTag) imgUrl = imgTag.src;
+                } catch (e) {
+                }
+              }
+              const a = document.createElement('a');
               a.href = linkEl ? linkEl.textContent : '#';
-              a.textContent = titleEl ? titleEl.textContent : '';
-              li.appendChild(a);
-              list.appendChild(li);
+              const art = document.createElement('article');
+              if (imgUrl) {
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.alt = titleEl ? titleEl.textContent : '';
+                art.appendChild(img);
+              }
+              if (titleEl) {
+                const h2 = document.createElement('h2');
+                h2.className = 'h1__font';
+                h2.textContent = titleEl.textContent;
+                art.appendChild(h2);
+              }
+              if (descEl) {
+                const p = document.createElement('p');
+                p.className = 'p__text';
+                p.textContent = descEl.textContent;
+                art.appendChild(p);
+              }
+              a.appendChild(art);
+              node.appendChild(a);
             }
             rendered = next;
             if (rendered >= items.length) {

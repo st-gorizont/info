@@ -45,15 +45,13 @@ async function loadPageForEdit() {
   var pages = await getPages();
   if (params.has('index')) {
     editIndex = Number(params.get('index'));
-  } else {
-    editIndex = pages.findIndex(function (p) { return p.url === 'index'; });
-  }
-  var page = pages[editIndex];
-  if (page) {
-    document.getElementById('pageTitle').value = page.title;
-    document.getElementById('pageUrl').value = page.url;
-    (page.blocks || []).forEach(function (b) { addBlock(b.type, b); });
-    document.getElementById('deletePageBtn').style.display = 'inline';
+    var page = pages[editIndex];
+    if (page) {
+      document.getElementById('pageTitle').value = page.title;
+      document.getElementById('pageUrl').value = page.url;
+      (page.blocks || []).forEach(function (b) { addBlock(b.type, b); });
+      document.getElementById('deletePageBtn').style.display = 'inline';
+    }
   }
 }
 

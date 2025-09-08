@@ -85,6 +85,15 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     });
 
     await renderPages();
+    document.getElementById('editHomeBtn').addEventListener('click', async function () {
+      var pages = await getPages();
+      var idx = pages.findIndex(function (p) { return p.url === 'index'; });
+      if (idx >= 0) {
+        location.href = 'page-builder.html?index=' + idx;
+      } else {
+        location.href = 'page-builder.html';
+      }
+    });
     document.querySelector('#sidebar li').click();
   } else {
     document.getElementById('loginError').style.display = 'block';
