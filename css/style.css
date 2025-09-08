@@ -52,6 +52,12 @@ header{
   margin-top:75px;
 }
 
+#logo{
+  display:block;
+  max-width:150px;
+  margin:0 auto;
+}
+
 .menu{
   margin:77px auto 0;
   padding-left:30px;
