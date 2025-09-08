@@ -188,3 +188,113 @@ function applyArticles() {
 
   renderBatch();
 }
+
+const TELEGRAM_TOKEN = '358296869:AAGfM7zpZsl8oSVnXWrF_AMzDPwN9zgsOSk';
+const TELEGRAM_CHAT = '-1002649665529';
+
+const defaultPages = [];
+
+function getPages() {
+  const stored = localStorage.getItem('pages');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error('Failed to parse pages data');
+    }
+  }
+  return defaultPages;
+}
+
+function setPages(pages) {
+  localStorage.setItem('pages', JSON.stringify(pages));
+}
+
+function applyPage(url) {
+  const page = getPages().find(p => p.url === url);
+  const container = document.getElementById('pageContent') || document.querySelector('main');
+  if (!page || !container) return;
+  container.innerHTML = '';
+  page.blocks.forEach(block => {
+    let node;
+    switch (block.type) {
+      case 'gallery':
+        node = document.createElement('div');
+        node.className = 'gallery';
+        let rendered = 0;
+        const batch = 6;
+        function renderBatch() {
+          const next = Math.min(rendered + batch, block.images.length);
+          for (let i = rendered; i < next; i++) {
+            const img = document.createElement('img');
+            img.src = block.images[i];
+            node.appendChild(img);
+          }
+          rendered = next;
+          if (rendered >= block.images.length && loadMoreBtn) {
+            loadMoreBtn.style.display = 'none';
+          }
+        }
+        const loadMoreBtn = document.createElement('button');
+        loadMoreBtn.textContent = 'Show more';
+        loadMoreBtn.addEventListener('click', e => {
+          e.preventDefault();
+          renderBatch();
+        });
+        renderBatch();
+        container.appendChild(node);
+        container.appendChild(loadMoreBtn);
+        break;
+      case 'text':
+        node = document.createElement('div');
+        const h = document.createElement('h2');
+        h.textContent = block.title || '';
+        const p = document.createElement('p');
+        p.textContent = block.text || '';
+        node.appendChild(h);
+        node.appendChild(p);
+        container.appendChild(node);
+        break;
+      case 'form':
+        node = document.createElement('form');
+        node.className = 'contactForm';
+        node.innerHTML = '<input name="name" type="text" placeholder="Name">' +
+          '<input name="phone" type="text" placeholder="Phone">' +
+          '<input name="email" type="email" placeholder="Email">' +
+          '<button type="submit">Send</button>';
+        node.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const data = new FormData(node);
+          fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_CHAT,
+              text: `Name: ${data.get('name')}\nPhone: ${data.get('phone')}\nEmail: ${data.get('email')}`
+            })
+          }).then(() => alert('Sent'));
+        });
+        container.appendChild(node);
+        break;
+      case 'social':
+        node = document.createElement('div');
+        node.className = 'social';
+        (block.items || []).forEach(it => {
+          const a = document.createElement('a');
+          a.href = it.link || '#';
+          const img = document.createElement('img');
+          img.src = it.img || '';
+          img.alt = it.name || '';
+          a.appendChild(img);
+          const span = document.createElement('span');
+          span.textContent = it.name || '';
+          a.appendChild(span);
+          node.appendChild(a);
+        });
+        container.appendChild(node);
+        break;
+      default:
+        break;
+    }
+  });
+}

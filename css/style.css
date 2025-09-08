@@ -144,3 +144,30 @@ main > a{
     margin-bottom:10px;
   }
 }
+
+.gallery{
+  display:flex;
+  flex-wrap:wrap;
+}
+.gallery img{
+  flex:0 0 calc(33.333% - 10px);
+  margin:5px;
+}
+.contactForm{
+  display:flex;
+  flex-direction:column;
+  max-width:300px;
+}
+.contactForm input, .contactForm button{
+  margin-bottom:10px;
+}
+.social a{
+  display:flex;
+  align-items:center;
+  margin-bottom:10px;
+}
+.social img{
+  width:24px;
+  height:24px;
+  margin-right:5px;
+}

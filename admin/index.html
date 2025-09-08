@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin</title>
+  <style>
+    #admin { display: none; }
+    #admin.active { display: flex; }
+    #sidebar { width: 200px; }
+    #sidebar ul { list-style: none; padding: 0; }
+    #sidebar li { padding: 10px; cursor: pointer; background: #eee; margin-bottom: 5px; }
+    #content { flex: 1; padding: 20px; }
+    .tab { display: none; }
+  </style>
 </head>
 <body>
   <div id="login">
@@ -15,32 +24,49 @@
     </form>
     <p id="loginError" style="color:red;display:none;">Invalid credentials</p>
   </div>
-  <div id="editor" style="display:none;">
-    <h1>Site Editor</h1>
-    <section>
-      <h2>Logo</h2>
-      <form id="logoForm">
-        <input type="text" id="logoUrl" placeholder="Logo URL">
-        <button type="submit">Save Logo</button>
-      </form>
-    </section>
-    <section>
-      <h2>Banner</h2>
-      <form id="bannerForm">
-        <input type="text" id="bannerUrl" placeholder="Banner URL">
-        <button type="submit">Save Banner</button>
-      </form>
-    </section>
-    <section>
-      <h2>Menu</h2>
-      <form id="menuForm"></form>
-    </section>
-    <section>
-      <h2>Articles</h2>
-      <form id="articlesForm"></form>
-    </section>
+  <div id="admin">
+    <aside id="sidebar">
+      <ul>
+        <li data-tab="menu">Menu</li>
+        <li data-tab="posts">Posts</li>
+        <li data-tab="pages">Pages</li>
+        <li data-tab="logo">Logo</li>
+        <li data-tab="banner">Banner</li>
+      </ul>
+    </aside>
+    <div id="content">
+      <section id="tab-menu" class="tab">
+        <h2>Menu</h2>
+        <form id="menuForm"></form>
+      </section>
+      <section id="tab-posts" class="tab">
+        <h2>Articles</h2>
+        <form id="articlesForm"></form>
+      </section>
+      <section id="tab-pages" class="tab">
+        <h2>Pages</h2>
+        <input type="text" id="pageSearch" placeholder="Search by title">
+        <button id="addPageBtn" type="button">Add Page</button>
+        <ul id="pagesList"></ul>
+      </section>
+      <section id="tab-logo" class="tab">
+        <h2>Logo</h2>
+        <form id="logoForm">
+          <input type="text" id="logoUrl" placeholder="Logo URL">
+          <button type="submit">Save Logo</button>
+        </form>
+      </section>
+      <section id="tab-banner" class="tab">
+        <h2>Banner</h2>
+        <form id="bannerForm">
+          <input type="text" id="bannerUrl" placeholder="Banner URL">
+          <button type="submit">Save Banner</button>
+        </form>
+      </section>
+    </div>
   </div>
   <script src="../js/data.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
+
