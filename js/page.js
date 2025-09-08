@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () {
   applyBanner('#banner');
-  applyMenu('.menu a');
+  applyMenu('.menu ul');
   var params = new URLSearchParams(window.location.search);
   var url = params.get('url');
   await applyPage(url);

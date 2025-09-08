@@ -12,16 +12,36 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     var menuForm = document.getElementById('menuForm');
     menuForm.innerHTML = '';
-    getMenu().forEach(function (item) {
+
+    function createMenuRow(item) {
       var div = document.createElement('div');
-      div.innerHTML = '<input type="text" placeholder="Name" value="' + item.name + '"> ' +
-        '<input type="text" placeholder="URL" value="' + item.url + '">';
-      menuForm.appendChild(div);
+      div.innerHTML = '<input type="text" placeholder="Name" value="' + (item.name || '') + '"> ' +
+        '<input type="text" placeholder="URL" value="' + (item.url || '') + '"> ' +
+        '<button type="button" class="remove-menu">Delete</button>';
+      var btn = div.querySelector('.remove-menu');
+      btn.addEventListener('click', function () {
+        div.remove();
+      });
+      return div;
+    }
+
+    getMenu().forEach(function (item) {
+      menuForm.appendChild(createMenuRow(item));
     });
+
+    var addMenu = document.createElement('button');
+    addMenu.type = 'button';
+    addMenu.textContent = 'Add Menu Item';
+    menuForm.appendChild(addMenu);
+
     var menuSave = document.createElement('button');
     menuSave.type = 'submit';
     menuSave.textContent = 'Save Menu';
     menuForm.appendChild(menuSave);
+
+    addMenu.addEventListener('click', function () {
+      menuForm.insertBefore(createMenuRow({}), addMenu);
+    });
 
     var articlesForm = document.getElementById('articlesForm');
     articlesForm.innerHTML = '';

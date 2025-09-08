@@ -14,12 +14,7 @@
         <img id="banner" src="img/image1.jpg" alt="Banner">
         <div class="burger">&#9776;</div>
         <nav class="menu">
-            <ul>
-                <li><a href="#">lifestyle</a></li>
-                <li><a href="#">photodiary</a></li>
-                <li><a href="#">travel</a></li>
-                <li><a href="#">music</a></li>
-            </ul>
+            <ul></ul>
         </nav>
     </header>
     <main id="articles" class="main"></main>
@@ -32,7 +27,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             applyBanner('#banner');
-            applyMenu('.menu a');
+            applyMenu('.menu ul');
             applyArticles();
 
             var burger = document.querySelector('.burger');
