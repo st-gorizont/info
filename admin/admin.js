@@ -7,6 +7,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     document.getElementById('editor').style.display = 'block';
 
     document.getElementById('logoUrl').value = getLogo();
+    document.getElementById('bannerUrl').value = getBanner();
 
     var menuForm = document.getElementById('menuForm');
     menuForm.innerHTML = '';
@@ -49,6 +50,12 @@ document.getElementById('logoForm').addEventListener('submit', function (e) {
   e.preventDefault();
   setLogo(document.getElementById('logoUrl').value.trim());
   alert('Logo saved');
+});
+
+document.getElementById('bannerForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  setBanner(document.getElementById('bannerUrl').value.trim());
+  alert('Banner saved');
 });
 
 document.getElementById('menuForm').addEventListener('submit', function (e) {
