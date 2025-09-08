@@ -43,6 +43,7 @@ async function loadPageForEdit() {
       document.getElementById('pageTitle').value = page.title;
       document.getElementById('pageUrl').value = page.url;
       (page.blocks || []).forEach(function (b) { addBlock(b.type, b); });
+      document.getElementById('deletePageBtn').style.display = 'inline';
     }
   }
 }
@@ -59,6 +60,17 @@ document.getElementById('viewPageBtn').addEventListener('click', function () {
   var url = document.getElementById('pageUrl').value.trim();
   if (!url) return;
   window.open('../page.html?url=' + encodeURIComponent(url), '_blank');
+});
+
+document.getElementById('deletePageBtn').addEventListener('click', async function () {
+  if (editIndex === null) return;
+  if (!confirm('Delete this page?')) return;
+  var pages = await getPages();
+  if (pages[editIndex]) {
+    pages.splice(editIndex, 1);
+    await setPages(pages);
+  }
+  location.href = 'index.html';
 });
 
 document.getElementById('pageForm').addEventListener('submit', async function (e) {
