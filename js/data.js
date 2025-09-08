@@ -306,6 +306,7 @@ async function applyPage(url) {
         break;
       case 'posts':
         node = document.createElement('div');
+        node.className = 'posts-grid';
         const posts = getArticles();
         let postsRendered = 0;
         const postsBatch = 6;
@@ -346,7 +347,7 @@ async function applyPage(url) {
           }
         }
         const postsBtn = document.createElement('button');
-        postsBtn.textContent = 'Show more';
+        postsBtn.textContent = 'Load more';
         postsBtn.addEventListener('click', e => { e.preventDefault(); renderPosts(); });
         renderPosts();
         container.appendChild(node);

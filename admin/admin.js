@@ -57,6 +57,11 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         '<input type="text" placeholder="Title" value="' + (art.title || '') + '">' +
         '<textarea placeholder="Text">' + (art.text || '') + '</textarea>' +
         '<input type="hidden" class="article-date" value="' + (art.date || '') + '">';
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.textContent = 'Delete';
+      del.addEventListener('click', function () { fs.remove(); });
+      fs.appendChild(del);
       return fs;
     }
 

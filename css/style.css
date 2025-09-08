@@ -87,6 +87,13 @@ header{
   margin:102px auto 0;
 }
 
+.posts-grid{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  width:100%;
+}
+
 article{
   flex:1 1 300px;
   margin:0 0 60px;
@@ -104,6 +111,12 @@ a{
 }
 
 main > a{
+  display:block;
+  flex:0 1 calc(33.333% - 30px);
+  margin:0 0 60px;
+}
+
+.posts-grid > a{
   display:block;
   flex:0 1 calc(33.333% - 30px);
   margin:0 0 60px;
@@ -157,6 +170,9 @@ main > a{
   main > a{
     flex:0 1 calc(50% - 30px);
   }
+  .posts-grid > a{
+    flex:0 1 calc(50% - 30px);
+  }
   article{
     flex:1 1 calc(50% - 30px);
   }
@@ -183,6 +199,7 @@ main > a{
     margin-bottom:10px;
   }
   main > a,
+  .posts-grid > a,
   article{
     flex:1 1 100%;
   }
