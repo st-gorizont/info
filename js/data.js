@@ -362,7 +362,13 @@ async function applyPage(url) {
         rssBtn.textContent = 'Show more';
         rssBtn.style.display = 'none';
         container.appendChild(rssBtn);
-        fetch(block.url).then(res => res.text()).then(str => {
+        function fetchRSS(url) {
+          return fetch(url).then(res => {
+            if (res.ok) return res.text();
+            throw new Error('Failed');
+          }).catch(() => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url)).then(r => r.text()));
+        }
+        fetchRSS(block.url).then(str => {
           const parser = new DOMParser();
           const xml = parser.parseFromString(str, 'application/xml');
           const items = Array.from(xml.querySelectorAll('item'));
