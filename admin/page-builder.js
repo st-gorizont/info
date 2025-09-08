@@ -24,6 +24,13 @@ function addBlock(type, data) {
     if (data && data.items) {
       div.querySelector('textarea').value = data.items.map(function (it) { return JSON.stringify(it); }).join('\n');
     }
+  } else if (type === 'posts') {
+    div.innerHTML = '<h3>Posts</h3><p>Shows list of posts with load more.</p>';
+  } else if (type === 'rss') {
+    div.innerHTML = '<h3>RSS Feed</h3><input type="text" placeholder="RSS URL">';
+    if (data && data.url) {
+      div.querySelector('input').value = data.url;
+    }
   }
   var rm = document.createElement('button');
   rm.type = 'button';
@@ -94,6 +101,11 @@ document.getElementById('pageForm').addEventListener('submit', async function (e
         try { items.push(JSON.parse(line)); } catch (e) { }
       });
       return { type: type, items: items };
+    } else if (type === 'posts') {
+      return { type: type };
+    } else if (type === 'rss') {
+      var input = div.querySelector('input');
+      return { type: type, url: input ? input.value.trim() : '' };
     }
     return null;
   }).filter(Boolean);
