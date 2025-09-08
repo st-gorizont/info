@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   applyBanner('#banner');
-  applyMenu('.menu a');
+  applyMenu('.menu ul');
 
   var burger = document.querySelector('.burger');
   var menu = document.querySelector('.menu');

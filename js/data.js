@@ -22,13 +22,17 @@ function setMenu(menu) {
 }
 
 function applyMenu(selector) {
-  const links = document.querySelectorAll(selector);
+  const list = document.querySelector(selector);
   const menu = getMenu();
-  menu.forEach((item, idx) => {
-    if (links[idx]) {
-      links[idx].textContent = item.name;
-      links[idx].setAttribute('href', item.url || '#');
-    }
+  if (!list) return;
+  list.innerHTML = '';
+  menu.forEach(item => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.textContent = item.name;
+    a.setAttribute('href', item.url || '#');
+    li.appendChild(a);
+    list.appendChild(li);
   });
 }
 
