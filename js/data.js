@@ -354,6 +354,7 @@ async function applyPage(url) {
           }
         }
         const postsBtn = document.createElement('button');
+        postsBtn.className = 'load-more';
         postsBtn.textContent = 'Load more';
         postsBtn.addEventListener('click', e => { e.preventDefault(); renderPosts(); });
         renderPosts();
