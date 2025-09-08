@@ -33,17 +33,21 @@ function addBlock(type, data) {
   container.appendChild(div);
 }
 
-var params = new URLSearchParams(window.location.search);
-if (params.has('index')) {
-  editIndex = Number(params.get('index'));
-  var pages = getPages();
-  var page = pages[editIndex];
-  if (page) {
-    document.getElementById('pageTitle').value = page.title;
-    document.getElementById('pageUrl').value = page.url;
-    (page.blocks || []).forEach(function (b) { addBlock(b.type, b); });
+async function loadPageForEdit() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.has('index')) {
+    editIndex = Number(params.get('index'));
+    var pages = await getPages();
+    var page = pages[editIndex];
+    if (page) {
+      document.getElementById('pageTitle').value = page.title;
+      document.getElementById('pageUrl').value = page.url;
+      (page.blocks || []).forEach(function (b) { addBlock(b.type, b); });
+    }
   }
 }
+
+loadPageForEdit();
 
 document.getElementById('addBlockBtn').addEventListener('click', function () {
   var type = document.getElementById('blockType').value;
@@ -51,7 +55,13 @@ document.getElementById('addBlockBtn').addEventListener('click', function () {
   addBlock(type);
 });
 
-document.getElementById('pageForm').addEventListener('submit', function (e) {
+document.getElementById('viewPageBtn').addEventListener('click', function () {
+  var url = document.getElementById('pageUrl').value.trim();
+  if (!url) return;
+  window.open('../page.html?url=' + encodeURIComponent(url), '_blank');
+});
+
+document.getElementById('pageForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   var title = document.getElementById('pageTitle').value.trim();
   var url = document.getElementById('pageUrl').value.trim();
@@ -75,13 +85,13 @@ document.getElementById('pageForm').addEventListener('submit', function (e) {
     }
     return null;
   }).filter(Boolean);
-  var pages = getPages();
+  var pages = await getPages();
   if (editIndex !== null && pages[editIndex]) {
     pages[editIndex] = { title: title, url: url, blocks: blocks };
   } else {
     pages.push({ title: title, url: url, blocks: blocks });
   }
-  setPages(pages);
+  await setPages(pages);
   alert('Page saved');
   location.href = 'index.html';
 });

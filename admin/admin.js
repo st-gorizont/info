@@ -1,4 +1,4 @@
-document.getElementById('loginForm').addEventListener('submit', function (e) {
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   var user = document.getElementById('username').value;
   var pass = document.getElementById('password').value;
@@ -59,26 +59,33 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
       articlesForm.insertBefore(createFieldset({}, idx), addBtn);
     });
 
-    renderPages();
+    await renderPages();
     document.querySelector('#sidebar li').click();
   } else {
     document.getElementById('loginError').style.display = 'block';
   }
 });
 
-function renderPages() {
+async function renderPages() {
   var list = document.getElementById('pagesList');
   var term = document.getElementById('pageSearch').value.toLowerCase();
-  var pages = getPages();
+  var pages = await getPages();
   list.innerHTML = '';
   pages.forEach(function (p, idx) {
     if (!p.title.toLowerCase().includes(term)) return;
     var li = document.createElement('li');
-    var view = document.createElement('a');
-    view.textContent = p.title + ' (' + p.url + ')';
-    view.href = '../page.html?url=' + encodeURIComponent(p.url);
-    view.target = '_blank';
+    var info = document.createElement('span');
+    info.textContent = p.title + ' (' + p.url + ')';
+    li.appendChild(info);
+
+    var view = document.createElement('button');
+    view.type = 'button';
+    view.textContent = 'View';
+    view.addEventListener('click', function () {
+      window.open('../page.html?url=' + encodeURIComponent(p.url), '_blank');
+    });
     li.appendChild(view);
+
     var edit = document.createElement('button');
     edit.type = 'button';
     edit.textContent = 'Edit';
@@ -86,6 +93,20 @@ function renderPages() {
       location.href = 'page-builder.html?index=' + idx;
     });
     li.appendChild(edit);
+
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.textContent = 'Delete';
+    del.addEventListener('click', async function () {
+      if (confirm('Delete this page?')) {
+        var pages = await getPages();
+        pages.splice(idx, 1);
+        await setPages(pages);
+        renderPages();
+      }
+    });
+    li.appendChild(del);
+
     list.appendChild(li);
   });
 }

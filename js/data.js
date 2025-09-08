@@ -193,25 +193,34 @@ const TELEGRAM_TOKEN = '358296869:AAGfM7zpZsl8oSVnXWrF_AMzDPwN9zgsOSk';
 const TELEGRAM_CHAT = '-1002649665529';
 
 const defaultPages = [];
+const PAGES_ENDPOINT = '/pages.php';
 
-function getPages() {
-  const stored = localStorage.getItem('pages');
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      console.error('Failed to parse pages data');
-    }
+async function getPages() {
+  try {
+    const res = await fetch(PAGES_ENDPOINT);
+    if (!res.ok) throw new Error('Failed to load pages');
+    return await res.json();
+  } catch (e) {
+    console.error('Failed to fetch pages', e);
+    return defaultPages;
   }
-  return defaultPages;
 }
 
-function setPages(pages) {
-  localStorage.setItem('pages', JSON.stringify(pages));
+async function setPages(pages) {
+  try {
+    await fetch(PAGES_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pages)
+    });
+  } catch (e) {
+    console.error('Failed to save pages', e);
+  }
 }
 
-function applyPage(url) {
-  const page = getPages().find(p => p.url === url);
+async function applyPage(url) {
+  const pages = await getPages();
+  const page = pages.find(p => p.url === url);
   const container = document.getElementById('pageContent') || document.querySelector('main');
   if (!page || !container) return;
   container.innerHTML = '';
