@@ -129,7 +129,7 @@ main > a{
   margin:0 auto 70px;
   text-align:center;
   font-family:'Playfair Display', serif;
-  font-style:14px;
+  font-size:14px;
 }
 
 .button > a{
@@ -137,6 +137,20 @@ main > a{
   width:100%;
   height:100%;
   display:block;
+}
+
+.load-more{
+  display:block;
+  width:160px;
+  height:60px;
+  line-height:60px;
+  margin:0 auto 70px;
+  border:1px solid #626262;
+  background:transparent;
+  text-align:center;
+  font-family:'Playfair Display', serif;
+  font-size:14px;
+  cursor:pointer;
 }
 
 .gallery{
