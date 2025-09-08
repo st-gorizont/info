@@ -193,26 +193,22 @@ const TELEGRAM_TOKEN = '358296869:AAGfM7zpZsl8oSVnXWrF_AMzDPwN9zgsOSk';
 const TELEGRAM_CHAT = '-1002649665529';
 
 const defaultPages = [];
-const PAGES_ENDPOINT = '/pages.php';
 
 async function getPages() {
   try {
-    const res = await fetch(PAGES_ENDPOINT);
-    if (!res.ok) throw new Error('Failed to load pages');
-    return await res.json();
+    const stored = localStorage.getItem('pages');
+    if (stored) {
+      return JSON.parse(stored);
+    }
   } catch (e) {
-    console.error('Failed to fetch pages', e);
-    return defaultPages;
+    console.error('Failed to parse pages', e);
   }
+  return defaultPages;
 }
 
 async function setPages(pages) {
   try {
-    await fetch(PAGES_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pages)
-    });
+    localStorage.setItem('pages', JSON.stringify(pages));
   } catch (e) {
     console.error('Failed to save pages', e);
   }
