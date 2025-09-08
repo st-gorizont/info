@@ -18,6 +18,7 @@
   margin-top:30px;
   font-family:'Playfair Display', serif;
   color:#626262;
+ codex-6zr2ci
   font-size:30px;
 }
 
@@ -62,6 +63,48 @@ header{
 
 .menu a:hover{
   color:blue;
+=======
+  font-style:30px;
+}
+
+.p__text{
+  margin-top:40px;
+  font-family:'Playfair Display', serif;
+  color:#626262;
+  font-size:14px;
+  line-height:25px;
+}
+
+body{
+  max-width:960px;
+  width:90%;
+  margin:0 auto;
+}
+
+.menu ul{
+  display:flex;
+  justify-content:space-around;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.menu a:hover{
+  color:blue;
+}
+
+header{
+  margin-bottom:5px;
+  margin-top:75px;
+}
+
+.menu{
+  margin:77px auto 0;
+  padding-left:30px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-size:14px;
+  text-transform:uppercase;
+ master
 }
 
 .main{
@@ -94,7 +137,11 @@ a{
   margin:0 auto 70px;
   text-align:center;
   font-family:'Playfair Display', serif;
+ codex-6zr2ci
   font-size:14px;
+=======
+  font-style:14px;
+ master
 }
 
 .button > a{
@@ -105,6 +152,7 @@ a{
 }
 
 @media (max-width:600px){
+ codex-6zr2ci
   header{
     flex-direction:column;
     gap:20px;
@@ -113,6 +161,11 @@ a{
     flex-direction:column;
     align-items:center;
     gap:10px;
+=======
+  .menu ul{
+    flex-direction:column;
+    align-items:center;
+ master
   }
   .menu li{
     margin-bottom:10px;
