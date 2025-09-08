@@ -103,8 +103,10 @@ a{
   color:#626262;
 }
 
-main a{
+main > a{
   display:block;
+  flex:0 1 calc(33.333% - 30px);
+  margin:0 0 60px;
 }
 
 .button{
