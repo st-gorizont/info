@@ -1,28 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="ru">
 <head>
     <link href="css/style.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post</title>
+    <title>Карточка товара</title>
 </head>
-<body>
-    <header>
-        <img id="banner" src="img/image1.jpg" alt="Banner">
-        <div class="burger">&#9776;</div>
-        <nav class="menu">
-            <ul></ul>
-        </nav>
+<body class="page-post">
+    <header class="rz-header">
+        <div class="rz-topbar">
+            <div class="container rz-topbar-inner">
+                <p>Онлайн-магазин электроники, техники и товаров для дома</p>
+                <a class="rz-toplink" href="admin/index.html">Админ-панель</a>
+            </div>
+        </div>
+        <div class="rz-mainbar">
+            <div class="container rz-mainbar-inner">
+                <a class="rz-brand" href="index.html">ROZETKA<span>clone</span></a>
+                <button class="rz-catalog-btn" type="button">Каталог</button>
+                <form class="rz-search" action="#" role="search">
+                    <input type="search" placeholder="Я ищу..." aria-label="Поиск">
+                    <button type="submit">Найти</button>
+                </form>
+                <div class="rz-actions" aria-label="Действия пользователя">
+                    <button type="button">Сравнение</button>
+                    <button type="button">Избранное</button>
+                    <button type="button">Корзина</button>
+                </div>
+                <button class="burger" type="button" aria-label="Открыть меню">&#9776;</button>
+            </div>
+        </div>
+        <div class="rz-navwrap">
+            <div class="container">
+                <nav class="menu" aria-label="Основное меню">
+                    <ul></ul>
+                </nav>
+            </div>
+        </div>
+        <div class="container hero-wrap">
+            <img id="banner" src="img/image1.jpg" alt="Промо баннер">
+        </div>
     </header>
-    <main class="main">
-        <article>
+
+    <main class="main container">
+        <article class="post-card">
             <h1 id="postTitle" class="h1__font"></h1>
-            <img id="postImage" alt="Post image">
+            <img id="postImage" alt="Изображение товара">
             <p id="postText" class="p__text"></p>
         </article>
     </main>
+
+    <footer class="rz-footer">
+        <div class="container">
+            <p>Rozetka-style demo витрина. Контент редактируется через админ-панель.</p>
+        </div>
+    </footer>
+
     <script src="js/data.js"></script>
     <script src="js/post.js"></script>
 </body>
 </html>
-

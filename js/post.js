@@ -4,9 +4,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var burger = document.querySelector('.burger');
   var menu = document.querySelector('.menu');
-  burger.addEventListener('click', function () {
-    menu.classList.toggle('active');
-  });
+  if (burger && menu) {
+    burger.addEventListener('click', function () {
+      menu.classList.toggle('active');
+    });
+  }
 
   var params = new URLSearchParams(window.location.search);
   var id = parseInt(params.get('id'), 10);
@@ -18,4 +20,3 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('postText').textContent = article.text;
   }
 });
-
