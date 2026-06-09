@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function () {
-  applyBanner('#banner');
   applyMenu('.menu ul');
   var params = new URLSearchParams(window.location.search);
   var url = params.get('url');
-  await applyPage(url);
+  await applyPage(url || 'index');
 
   var burger = document.querySelector('.burger');
   var menu = document.querySelector('.menu');
@@ -13,4 +12,3 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 });
-

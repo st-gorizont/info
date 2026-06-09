@@ -1,71 +1,280 @@
-﻿<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="uk">
 <head>
-    <link href="css/style.css" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Rozetka Style Shop</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>СТ Горизонт</title>
+  <meta name="description" content="Садове товариство Горизонт. Актуальні оголошення, тарифи, документи, контакти та корисні сервіси для мешканців.">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="page-home">
-    <header class="rz-header">
-        <div class="rz-topbar">
-            <div class="container rz-topbar-inner">
-                <p>Онлайн-магазин электроники, техники и товаров для дома</p>
-                <a class="rz-toplink" href="admin/index.html">Админ-панель</a>
-            </div>
-        </div>
-        <div class="rz-mainbar">
-            <div class="container rz-mainbar-inner">
-                <a class="rz-brand" href="index.html">ROZETKA<span>clone</span></a>
-                <button class="rz-catalog-btn" type="button">Каталог</button>
-                <form class="rz-search" action="#" role="search">
-                    <input type="search" placeholder="Я ищу..." aria-label="Поиск">
-                    <button type="submit">Найти</button>
-                </form>
-                <div class="rz-actions" aria-label="Действия пользователя">
-                    <button type="button">Сравнение</button>
-                    <button type="button">Избранное</button>
-                    <button type="button">Корзина</button>
-                </div>
-                <button class="burger" type="button" aria-label="Открыть меню">&#9776;</button>
-            </div>
-        </div>
-        <div class="rz-navwrap">
-            <div class="container">
-                <nav class="menu" aria-label="Основное меню">
-                    <ul></ul>
-                </nav>
-            </div>
-        </div>
-        <div class="container hero-wrap">
-            <img id="banner" src="img/image1.jpg" alt="Промо баннер">
-        </div>
-    </header>
+<body class="horizon-body">
+  <header class="site-header" id="top">
+    <div class="top-strip">
+      <div class="container top-strip__inner">
+        <p>Садове товариство «Горизонт»</p>
+        <a href="#contacts">Зв'язатися з правлінням</a>
+      </div>
+    </div>
 
-    <main id="pageContent" class="main container"></main>
+    <div class="container nav-shell">
+      <a class="brand" href="#top">
+        <span class="brand__title">ГОРИЗОНТ</span>
+        <span class="brand__subtitle">садове товариство</span>
+      </a>
 
-    <footer class="rz-footer">
-        <div class="container">
-            <p>Rozetka-style demo витрина. Контент редактируется через админ-панель.</p>
+      <button class="burger" type="button" aria-label="Відкрити меню">
+        &#9776;
+      </button>
+
+      <nav class="menu" aria-label="Головне меню">
+        <ul>
+          <li><a href="#services">Швидкі дії</a></li>
+          <li><a href="#about">Про товариство</a></li>
+          <li><a href="#rates">Тарифи</a></li>
+          <li><a href="#documents">Документи</a></li>
+          <li><a href="#news">Оголошення</a></li>
+          <li><a href="#contacts">Контакти</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <p class="eyebrow">Офіційна сторінка товариства</p>
+          <h1>Зручний простір для мешканців СТ «Горизонт»</h1>
+          <p class="hero__lead">
+            Тут зібрана актуальна інформація для власників ділянок: оплата внесків,
+            показники лічильників, важливі рішення правління, контакти та оголошення.
+          </p>
+          <div class="hero__actions">
+            <a class="button button--primary" href="#services">Перейти до сервісів</a>
+            <a class="button button--ghost" href="#documents">Переглянути документи</a>
+          </div>
         </div>
-    </footer>
 
-    <script src="js/data.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            applyBanner('#banner');
-            applyMenu('.menu ul');
-            applyPage('index');
+        <aside class="hero__panel">
+          <h2>Оперативно</h2>
+          <ul class="hero__list">
+            <li>Подати показники електролічильника</li>
+            <li>Дізнатися актуальні тарифи та внески</li>
+            <li>Отримати реквізити для оплати</li>
+            <li>Знайти контакти електрика та правління</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
 
-            var burger = document.querySelector('.burger');
-            var menu = document.querySelector('.menu');
-            if (burger && menu) {
-                burger.addEventListener('click', function () {
-                    menu.classList.toggle('active');
-                });
-            }
+    <section class="services" id="services">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Швидкий доступ</p>
+          <h2>Основні послуги та сервіси</h2>
+        </div>
+
+        <div class="card-grid">
+          <a class="info-card" href="#rates">
+            <span class="info-card__tag">01</span>
+            <h3>Тарифи та внески</h3>
+            <p>Актуальна вартість електроенергії, членських та цільових внесків.</p>
+          </a>
+
+          <a class="info-card" href="#meter">
+            <span class="info-card__tag">02</span>
+            <h3>Показники лічильника</h3>
+            <p>Передача місячних показників для коректного обліку споживання.</p>
+          </a>
+
+          <a class="info-card" href="#documents">
+            <span class="info-card__tag">03</span>
+            <h3>Статут і рішення</h3>
+            <p>Документи товариства, протоколи та нормативна інформація.</p>
+          </a>
+
+          <a class="info-card" href="#contacts">
+            <span class="info-card__tag">04</span>
+            <h3>Контакти служб</h3>
+            <p>Правління, бухгалтерія, електрик та канали оперативного зв'язку.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="container about__grid">
+        <div>
+          <p class="eyebrow">Про товариство</p>
+          <h2>«Горизонт» — впорядкована територія для комфортного дачного життя</h2>
+          <p>
+            Сайт товариства створено як єдиний інформаційний майданчик для мешканців.
+            Тут можна швидко знайти правила, реквізити, новини, графіки робіт та
+            контакти відповідальних осіб.
+          </p>
+          <p>
+            Основний акцент — на прозорій комунікації та зрозумілому доступі до
+            щоденних сервісів без зайвих переходів.
+          </p>
+        </div>
+
+        <div class="stats-card">
+          <div class="stats-card__item">
+            <strong>24/7</strong>
+            <span>доступ до основної інформації</span>
+          </div>
+          <div class="stats-card__item">
+            <strong>1 сторінка</strong>
+            <span>усі ключові сервіси для мешканців</span>
+          </div>
+          <div class="stats-card__item">
+            <strong>Оперативно</strong>
+            <span>оголошення, зміни тарифів та рішення</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rates" id="rates">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Фінансова інформація</p>
+          <h2>Тарифи та порядок оплати</h2>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="pricing-card">
+            <h3>Електроенергія</h3>
+            <p class="price-value">за лічильником</p>
+            <p>Оплата відповідно до фактичного споживання та діючого тарифу.</p>
+          </article>
+
+          <article class="pricing-card">
+            <h3>Членський внесок</h3>
+            <p class="price-value">щомісяця</p>
+            <p>Покриває поточне утримання території, адміністративні та господарські витрати.</p>
+          </article>
+
+          <article class="pricing-card">
+            <h3>Цільові внески</h3>
+            <p class="price-value">за рішенням зборів</p>
+            <p>На ремонти, модернізацію мереж, благоустрій та інші затверджені роботи.</p>
+          </article>
+        </div>
+
+        <div class="notice-box">
+          <p>
+            Для фактичного сайту тут можна буде підставити точні суми, реквізити IBAN та
+            кнопку онлайн-оплати. Зараз я підготував структуру під такий формат.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="meter" id="meter">
+      <div class="container meter__panel">
+        <div>
+          <p class="eyebrow">Облік</p>
+          <h2>Передача показників лічильника</h2>
+          <p>
+            Надсилайте дані щомісяця у встановлені терміни, щоб уникати помилок в
+            нарахуваннях та мати актуальний баланс по ділянці.
+          </p>
+        </div>
+
+        <a class="button button--primary" href="#contacts">Передати показники</a>
+      </div>
+    </section>
+
+    <section class="documents" id="documents">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Документація</p>
+          <h2>Документи та корисна інформація</h2>
+        </div>
+
+        <div class="document-list">
+          <article class="document-item">
+            <h3>Статут товариства</h3>
+            <p>Основний документ, що регулює права та обов'язки членів СТ «Горизонт».</p>
+          </article>
+
+          <article class="document-item">
+            <h3>Рішення правління</h3>
+            <p>Актуальні рішення щодо тарифів, робіт на території та організаційних питань.</p>
+          </article>
+
+          <article class="document-item">
+            <h3>Часті питання</h3>
+            <p>Пояснення щодо оплати, користування мережею, доступу до сервісів і звернень.</p>
+          </article>
+
+          <article class="document-item">
+            <h3>Реквізити для оплати</h3>
+            <p>Підготовлений блок для розміщення IBAN, призначення платежу та інструкцій.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="news" id="news">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Оголошення</p>
+          <h2>Що важливо зараз</h2>
+        </div>
+
+        <div class="news-grid">
+          <article class="news-card">
+            <span class="news-card__date">Актуально</span>
+            <h3>Планові роботи на лінії електропостачання</h3>
+            <p>Інформаційний блок для попередження мешканців про технічні роботи та можливі відключення.</p>
+          </article>
+
+          <article class="news-card">
+            <span class="news-card__date">Щомісяця</span>
+            <h3>Термін передачі показників</h3>
+            <p>Окреме повідомлення для мешканців із датами прийому показників та нагадуваннями.</p>
+          </article>
+
+          <article class="news-card">
+            <span class="news-card__date">Оновлення</span>
+            <h3>Збори, рішення та зміни тарифів</h3>
+            <p>Секція під публікацію нових рішень правління, зборів та фінансових оновлень.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contacts">
+    <div class="container footer__grid">
+      <div>
+        <p class="eyebrow">Контакти</p>
+        <h2>Зв'язок з товариством</h2>
+        <p>Тут можна розмістити телефон голови правління, бухгалтера, електрика та адресу товариства.</p>
+      </div>
+
+      <div class="contact-card">
+        <p><strong>Адреса:</strong> СТ «Горизонт», Україна</p>
+        <p><strong>Телефон:</strong> +38 (0XX) XXX-XX-XX</p>
+        <p><strong>Email:</strong> info@horyzont-st.ua</p>
+        <p><strong>Години зв'язку:</strong> Пн–Сб, 09:00–18:00</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var burger = document.querySelector('.burger');
+      var menu = document.querySelector('.menu');
+      if (burger && menu) {
+        burger.addEventListener('click', function () {
+          menu.classList.toggle('active');
         });
-    </script>
+      }
+    });
+  </script>
 </body>
 </html>

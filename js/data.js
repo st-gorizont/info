@@ -1,8 +1,9 @@
 const defaultMenu = [
-  { name: 'lifestyle', url: '#' },
-  { name: 'photodiary', url: '#' },
-  { name: 'travel', url: '#' },
-  { name: 'music', url: '#' }
+  { name: 'Головна', url: 'index.html' },
+  { name: 'Тарифи', url: 'index.html#rates' },
+  { name: 'Документи', url: 'index.html#documents' },
+  { name: 'Оголошення', url: 'index.html#news' },
+  { name: 'Контакти', url: 'index.html#contacts' }
 ];
 
 function getMenu() {
@@ -70,49 +71,49 @@ function applyBanner(selector) {
   }
 }
 
-const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris';
+const lorem = 'Інформаційне повідомлення для мешканців садового товариства. Тут можна розміщувати деталі щодо оплат, робіт на території, рішень правління або технічних повідомлень.';
 
 const now = Date.now();
 const defaultArticles = [
   {
     img: 'img/image1.jpg',
-    category: 'Lifestyle',
-    title: 'More than just a music festival',
+    category: 'Оголошення',
+    title: 'Планові роботи на електролінії товариства',
     text: lorem,
     date: now
   },
   {
     img: 'img/image2.jpg',
-    category: 'Lifestyle',
-    title: 'Life tastes better with coffee',
+    category: 'Оплата',
+    title: 'Нагадування про передачу показників лічильника',
     text: lorem,
     date: now - 1
   },
   {
     img: 'img/image3.jpg',
-    category: 'photodiary',
-    title: 'American dream',
+    category: 'Рішення правління',
+    title: 'Оновлення внесків та поточних витрат',
     text: lorem,
     date: now - 2
   },
   {
     img: 'img/image4.jpg',
-    category: 'photodiary',
-    title: 'A day exploring the Alps',
+    category: 'Благоустрій',
+    title: 'Графік сезонних робіт на території',
     text: lorem,
     date: now - 3
   },
   {
     img: 'img/image5.jpg',
-    category: 'lifestyle',
-    title: 'Top 10 song for running',
+    category: 'Документи',
+    title: 'Публікація статуту та внутрішніх правил',
     text: lorem,
     date: now - 4
   },
   {
     img: 'img/image6.jpg',
-    category: 'lifestyle',
-    title: 'Cold winter days',
+    category: 'Контакти',
+    title: 'Оновлені контакти правління та служб',
     text: lorem,
     date: now - 5
   }
@@ -197,7 +198,7 @@ const TELEGRAM_TOKEN = '358296869:AAGfM7zpZsl8oSVnXWrF_AMzDPwN9zgsOSk';
 const TELEGRAM_CHAT = '-1002649665529';
 
 const defaultPages = [
-  { title: 'Home', url: 'index', blocks: [{ type: 'posts' }] }
+  { title: 'Головна', url: 'index', blocks: [{ type: 'posts' }] }
 ];
 
 async function getPages() {
@@ -214,7 +215,7 @@ async function getPages() {
     pages = defaultPages.slice();
   }
   if (!pages.some(p => p.url === 'index')) {
-    pages.unshift({ title: 'Home', url: 'index', blocks: [{ type: 'posts' }] });
+    pages.unshift({ title: 'Головна', url: 'index', blocks: [{ type: 'posts' }] });
   }
   return pages;
 }
@@ -254,7 +255,7 @@ async function applyPage(url) {
           }
         }
         const loadMoreBtn = document.createElement('button');
-        loadMoreBtn.textContent = 'Show more';
+        loadMoreBtn.textContent = 'Показати ще';
         loadMoreBtn.addEventListener('click', e => {
           e.preventDefault();
           renderBatch();
@@ -276,10 +277,10 @@ async function applyPage(url) {
       case 'form':
         node = document.createElement('form');
         node.className = 'contactForm';
-        node.innerHTML = '<input name="name" type="text" placeholder="Name">' +
-          '<input name="phone" type="text" placeholder="Phone">' +
+        node.innerHTML = '<input name="name" type="text" placeholder="Імʼя">' +
+          '<input name="phone" type="text" placeholder="Телефон">' +
           '<input name="email" type="email" placeholder="Email">' +
-          '<button type="submit">Send</button>';
+          '<button type="submit">Надіслати</button>';
         node.addEventListener('submit', function (e) {
           e.preventDefault();
           const data = new FormData(node);
@@ -290,7 +291,7 @@ async function applyPage(url) {
               chat_id: TELEGRAM_CHAT,
               text: `Name: ${data.get('name')}\nPhone: ${data.get('phone')}\nEmail: ${data.get('email')}`
             })
-          }).then(() => alert('Sent'));
+          }).then(() => alert('Надіслано'));
         });
         container.appendChild(node);
         break;
@@ -355,7 +356,7 @@ async function applyPage(url) {
         }
         const postsBtn = document.createElement('button');
         postsBtn.className = 'load-more';
-        postsBtn.textContent = 'Load more';
+        postsBtn.textContent = 'Показати ще';
         postsBtn.addEventListener('click', e => { e.preventDefault(); renderPosts(); });
         renderPosts();
         container.appendChild(node);
@@ -366,7 +367,7 @@ async function applyPage(url) {
         node.className = 'posts-grid';
         container.appendChild(node);
         const rssBtn = document.createElement('button');
-        rssBtn.textContent = 'Show more';
+        rssBtn.textContent = 'Показати ще';
         rssBtn.style.display = 'none';
         container.appendChild(rssBtn);
         function fetchRSS(url) {
@@ -434,7 +435,7 @@ async function applyPage(url) {
           rssBtn.addEventListener('click', e => { e.preventDefault(); renderBatch(); });
           renderBatch();
         }).catch(() => {
-          node.textContent = 'Failed to load feed';
+          node.textContent = 'Не вдалося завантажити стрічку';
           rssBtn.style.display = 'none';
         });
         break;

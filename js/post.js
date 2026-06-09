@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  applyBanner('#banner');
   applyMenu('.menu ul');
 
   var burger = document.querySelector('.burger');
@@ -18,5 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('postTitle').textContent = article.title;
     document.getElementById('postImage').src = article.img;
     document.getElementById('postText').textContent = article.text;
+  } else {
+    document.getElementById('postTitle').textContent = 'Оголошення тимчасово недоступне';
+    document.getElementById('postImage').style.display = 'none';
+    document.getElementById('postText').textContent = 'Поверніться на головну сторінку або відкрийте актуальне оголошення зі списку новин.';
   }
 });

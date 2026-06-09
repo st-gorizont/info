@@ -1,52 +1,59 @@
-﻿<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="uk">
 <head>
-  <link href="css/style.css" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Страница</title>
+  <title>Сторінка | СТ Горизонт</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="page-custom">
-  <header class="rz-header">
-    <div class="rz-topbar">
-      <div class="container rz-topbar-inner">
-        <p>Онлайн-магазин электроники, техники и товаров для дома</p>
-        <a class="rz-toplink" href="admin/index.html">Админ-панель</a>
+<body class="horizon-body">
+  <header class="site-header" id="top">
+    <div class="top-strip">
+      <div class="container top-strip__inner">
+        <p>Садове товариство «Горизонт»</p>
+        <a href="index.html#contacts">Зв'язатися з правлінням</a>
       </div>
     </div>
-    <div class="rz-mainbar">
-      <div class="container rz-mainbar-inner">
-        <a class="rz-brand" href="index.html">ROZETKA<span>clone</span></a>
-        <button class="rz-catalog-btn" type="button">Каталог</button>
-        <form class="rz-search" action="#" role="search">
-          <input type="search" placeholder="Я ищу..." aria-label="Поиск">
-          <button type="submit">Найти</button>
-        </form>
-        <div class="rz-actions" aria-label="Действия пользователя">
-          <button type="button">Сравнение</button>
-          <button type="button">Избранное</button>
-          <button type="button">Корзина</button>
-        </div>
-        <button class="burger" type="button" aria-label="Открыть меню">&#9776;</button>
-      </div>
-    </div>
-    <div class="rz-navwrap">
-      <div class="container">
-        <nav class="menu" aria-label="Основное меню">
-          <ul></ul>
-        </nav>
-      </div>
-    </div>
-    <div class="container hero-wrap">
-      <img id="banner" src="img/image1.jpg" alt="Промо баннер">
+
+    <div class="container nav-shell">
+      <a class="brand" href="index.html">
+        <span class="brand__title">ГОРИЗОНТ</span>
+        <span class="brand__subtitle">садове товариство</span>
+      </a>
+
+      <button class="burger" type="button" aria-label="Відкрити меню">
+        &#9776;
+      </button>
+
+      <nav class="menu" aria-label="Головне меню">
+        <ul></ul>
+      </nav>
     </div>
   </header>
 
-  <main class="main container" id="pageContent"></main>
+  <main class="container page-main">
+    <section class="inner-hero">
+      <p class="eyebrow">Інформаційний розділ</p>
+      <h1>Матеріали та сервіси для мешканців</h1>
+      <p>На цій сторінці відображається додатковий вміст, який можна редагувати через існуючу адмінку.</p>
+    </section>
 
-  <footer class="rz-footer">
-    <div class="container">
-      <p>Rozetka-style demo витрина. Контент редактируется через админ-панель.</p>
+    <section class="content-shell" id="pageContent"></section>
+  </main>
+
+  <footer class="site-footer" id="contacts">
+    <div class="container footer__grid">
+      <div>
+        <p class="eyebrow">Контакти</p>
+        <h2>Зв'язок з товариством</h2>
+        <p>СТ «Горизонт». Інформація для мешканців, оголошення та документи.</p>
+      </div>
+
+      <div class="contact-card">
+        <p><strong>Адреса:</strong> СТ «Горизонт», Україна</p>
+        <p><strong>Телефон:</strong> +38 (0XX) XXX-XX-XX</p>
+        <p><strong>Email:</strong> info@horyzont-st.ua</p>
+      </div>
     </div>
   </footer>
 
