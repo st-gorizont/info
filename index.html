@@ -35,6 +35,7 @@
           <li><a href="#bus">Автобус</a></li>
           <li><a href="#rates">Тарифи</a></li>
           <li><a href="#meter">Показники</a></li>
+          <li><a href="#feedback">Звернення</a></li>
           <li><a href="#contacts">Контакти</a></li>
         </ul>
       </nav>
@@ -284,6 +285,47 @@
           <a class="button button--primary" id="meterFormButton" href="#" target="_blank" rel="noopener noreferrer">Відкрити форму подання</a>
           <p class="meter__hint" id="meterFormHint">Після підключення форми тут з’явиться активне посилання для мешканців.</p>
         </div>
+      </div>
+    </section>
+
+    <section class="feedback" id="feedback">
+      <div class="container feedback__grid">
+        <div class="feedback__intro">
+          <p class="eyebrow">Звернення</p>
+          <h2>Форма зворотного зв'язку для правління</h2>
+          <p>
+            Залиште звернення для правління товариства: ім'я, номер ділянки, телефон і текст повідомлення.
+            Після підключення захищеного каналу повідомлення будуть автоматично надходити у Telegram.
+          </p>
+          <p class="feedback__status" id="feedbackStatusHint">Налаштовуємо безпечну доставку повідомлень у Telegram.</p>
+        </div>
+
+        <form class="feedback-form" id="feedbackForm">
+          <label class="field">
+            <span>Ім'я</span>
+            <input type="text" name="name" autocomplete="name" required>
+          </label>
+
+          <label class="field">
+            <span>№ ділянки</span>
+            <input type="text" name="plot" inputmode="text" required>
+          </label>
+
+          <label class="field">
+            <span>Телефон</span>
+            <input type="tel" name="phone" autocomplete="tel" required>
+          </label>
+
+          <label class="field field--wide">
+            <span>Повідомлення</span>
+            <textarea name="message" rows="6" required></textarea>
+          </label>
+
+          <div class="feedback-form__actions">
+            <button class="button button--primary" id="feedbackSubmit" type="submit">Надіслати звернення</button>
+            <p class="feedback-form__note" id="feedbackFormNote">Форма буде активна після підключення захищеного Telegram webhook.</p>
+          </div>
+        </form>
       </div>
     </section>
 

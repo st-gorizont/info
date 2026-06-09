@@ -1,6 +1,7 @@
 (function () {
   var LIVE_STATUS_URL = 'data/live-status.json';
   var FORM_CONFIG_URL = 'data/form-config.json';
+  var FEEDBACK_CONFIG_URL = 'data/feedback-config.json';
   var WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=51.4478&longitude=31.25672&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FKyiv&forecast_days=7';
 
   var weatherCodes = {
@@ -174,9 +175,82 @@
     }
   }
 
+  async function loadFeedbackConfig() {
+    var form = byId('feedbackForm');
+    var submit = byId('feedbackSubmit');
+    var note = byId('feedbackFormNote');
+    var status = byId('feedbackStatusHint');
+
+    if (!form || !submit || !note || !status) {
+      return;
+    }
+
+    var webhookUrl = '';
+
+    try {
+      var config = await fetchJson(FEEDBACK_CONFIG_URL);
+      webhookUrl = config.webhookUrl || '';
+      note.textContent = config.hint || note.textContent;
+      status.textContent = config.statusText || status.textContent;
+    } catch (error) {
+      note.textContent = 'Не вдалося завантажити конфігурацію форми зворотного зв\'язку.';
+    }
+
+    if (!webhookUrl) {
+      submit.setAttribute('aria-disabled', 'true');
+      submit.disabled = true;
+      return;
+    }
+
+    submit.disabled = false;
+    submit.removeAttribute('aria-disabled');
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(form);
+      var payload = {
+        name: String(formData.get('name') || '').trim(),
+        plot: String(formData.get('plot') || '').trim(),
+        phone: String(formData.get('phone') || '').trim(),
+        message: String(formData.get('message') || '').trim(),
+        submittedAt: new Date().toISOString(),
+        source: window.location.href
+      };
+
+      if (!payload.name || !payload.plot || !payload.phone || !payload.message) {
+        note.textContent = 'Заповніть усі поля форми.';
+        return;
+      }
+
+      submit.disabled = true;
+      note.textContent = 'Надсилаємо повідомлення…';
+
+      try {
+        var response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('HTTP ' + response.status);
+        }
+
+        form.reset();
+        note.textContent = 'Повідомлення успішно відправлено.';
+      } catch (error) {
+        note.textContent = 'Не вдалося відправити звернення. Спробуйте пізніше.';
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     loadLiveStatus();
     loadWeather();
     loadFormConfig();
+    loadFeedbackConfig();
   });
 })();
