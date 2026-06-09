@@ -30,6 +30,7 @@
       <nav class="menu" aria-label="Головне меню">
         <ul>
           <li><a href="#services">Швидкі дії</a></li>
+          <li><a href="#live-status">Онлайн-статус</a></li>
           <li><a href="#watering">Полив</a></li>
           <li><a href="#bus">Автобус</a></li>
           <li><a href="#rates">Тарифи</a></li>
@@ -44,6 +45,10 @@
     <section class="hero">
       <div class="container hero__grid">
         <div class="hero__content">
+          <video class="hero__video" autoplay muted loop playsinline poster="img/image1.jpg">
+            <source src="video/desna.mp4" type="video/mp4">
+          </video>
+          <div class="hero__video-fallback" aria-hidden="true"></div>
           <p class="eyebrow">Офіційна сторінка товариства</p>
           <h1>Уся важлива інформація СТ «Горизонт» в одному місці</h1>
           <p class="hero__lead">
@@ -104,6 +109,61 @@
       </div>
     </section>
 
+    <section class="info-section" id="live-status">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Онлайн-статус</p>
+          <h2>Актуальні відключення світла та повітряна тривога</h2>
+        </div>
+
+        <div class="live-grid">
+          <article class="live-card" id="powerStatusCard">
+            <div class="live-card__head">
+              <span class="info-card__tag">Світло</span>
+              <p class="live-card__source">Джерело: energy-ua.info, 3.1 черга</p>
+            </div>
+            <h3>Графік відключень</h3>
+            <p class="live-card__status" id="powerStatusText">Завантаження актуального статусу…</p>
+            <p class="live-card__meta" id="powerStatusMeta">Перевіряємо поточні дані по Чернігівській області.</p>
+            <a class="live-card__link" href="https://chernigiv.energy-ua.info/cherga/3-1" target="_blank" rel="noopener noreferrer">Відкрити повне джерело</a>
+          </article>
+
+          <article class="live-card">
+            <div class="live-card__head">
+              <span class="info-card__tag">Тривога</span>
+              <p class="live-card__source">Орієнтир для с. Жавинка: Чернігівська область</p>
+            </div>
+            <h3>Повітряна тривога</h3>
+            <p class="live-card__meta">Нижче вбудовано актуальну міні-карту тривог. Для Жавинки орієнтуйтесь на статус Чернігівської області.</p>
+            <div class="alert-embed">
+              <iframe
+                src="https://alerts.in.ua/mini"
+                title="Мапа повітряних тривог України"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              ></iframe>
+            </div>
+            <a class="live-card__link" href="https://alerts.in.ua/" target="_blank" rel="noopener noreferrer">Відкрити повну карту тривог</a>
+          </article>
+        </div>
+
+        <article class="live-card live-card--wide" id="weather">
+          <div class="live-card__head">
+            <span class="info-card__tag">Погода</span>
+            <p class="live-card__source">Джерело: Open-Meteo, с. Жавинка / Чернігівський район</p>
+          </div>
+          <h3>Прогноз на сьогодні та на 7 днів</h3>
+          <div class="weather-layout">
+            <div class="weather-today">
+              <p class="live-card__status" id="weatherToday">Завантаження погоди…</p>
+              <p class="live-card__meta" id="weatherMeta">Оновлюємо дані для Жавинки.</p>
+            </div>
+            <div class="weather-days" id="weatherDays"></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="info-section" id="watering">
       <div class="container">
         <div class="section-head">
@@ -140,9 +200,9 @@
         <div class="schedule-shell">
           <div class="schedule-card">
             <h3>Розклад руху</h3>
-            <p><strong>Ліва колонка</strong> — відправлення від «Дачного світу» до дач. <strong>Права колонка</strong> — відправлення з дач у зворотному напрямку.</p>
+            <p><strong>Ліва колонка</strong> — відправлення від магазину «Дитячий світ» до дач. <strong>Права колонка</strong> — відправлення з дач у зворотному напрямку.</p>
             <div class="schedule-table">
-              <div class="schedule-table__head">Від «Дачного світу»</div>
+              <div class="schedule-table__head">Від «Дитячого світу»</div>
               <div class="schedule-table__head">Від дач</div>
 
               <div>06:20</div><div>06:55</div>
@@ -161,7 +221,7 @@
             <h3>Вартість проїзду</h3>
             <p><strong>У напрямку до села / міста</strong> — 25 грн</p>
             <p><strong>У напрямку до дач</strong> — 30 грн</p>
-            <p class="schedule-note">Якщо хочеш, я ще можу зробити це не таблицею, а двома окремими списками: «Туди» і «Назад» — це буде ще зрозуміліше на телефоні.</p>
+            <p class="schedule-note">Розклад подано у двох колонках, щоб було одразу видно рейси до дач і у зворотному напрямку.</p>
           </div>
         </div>
       </div>
@@ -331,5 +391,6 @@
       }
     });
   </script>
+  <script src="js/live-widgets.js"></script>
 </body>
 </html>
