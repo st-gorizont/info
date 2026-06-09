@@ -1,6 +1,6 @@
 (function () {
-  var POWER_URL = 'https://chernigiv.energy-ua.info/cherga/3-1';
-  var POWER_PROXY_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(POWER_URL);
+  var LIVE_STATUS_URL = 'data/live-status.json';
+  var FORM_CONFIG_URL = 'data/form-config.json';
   var WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=51.4478&longitude=31.25672&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FKyiv&forecast_days=7';
 
   var weatherCodes = {
@@ -40,8 +40,17 @@
     }
   }
 
+  function setHref(id, href) {
+    var node = byId(id);
+    if (node && href) {
+      node.href = href;
+    }
+  }
+
   function weatherLabel(code) {
-    return weatherCodes.hasOwnProperty(code) ? weatherCodes[code] : 'Без уточнення';
+    return Object.prototype.hasOwnProperty.call(weatherCodes, code)
+      ? weatherCodes[code]
+      : 'Без уточнення';
   }
 
   function formatDay(dateString) {
@@ -49,75 +58,68 @@
     return dayNames[date.getDay()] + ', ' + String(date.getDate()).padStart(2, '0') + '.' + String(date.getMonth() + 1).padStart(2, '0');
   }
 
-  async function fetchText(url) {
-    var response = await fetch(url, { headers: { Accept: 'text/html,application/json;q=0.9,*/*;q=0.8' } });
+  async function fetchJson(url) {
+    var response = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!response.ok) {
       throw new Error('HTTP ' + response.status);
     }
-    return response.text();
+    return response.json();
   }
 
-  function extractPowerStatus(html) {
-    var doc = new DOMParser().parseFromString(html, 'text/html');
-    var text = (doc.body ? doc.body.textContent : html).replace(/\s+/g, ' ').trim();
-    var queueMatch = text.match(/У вас\s+([^.]*)/i);
-    var dateMatch = text.match(/(\d+\s+черга\s*\(\d+\s+підгрупа\)\s*[A-ЯІЇЄа-яіїє.\s]+\d{2}\.\d{2}\.\d{4})/);
-    var todayBlock = '';
-    var todayStart = text.indexOf('Періоди відключень на сьогодні');
-    var tomorrowStart = text.indexOf('Періоди відключень на завтра');
-
-    if (todayStart !== -1) {
-      todayBlock = text.slice(todayStart, tomorrowStart !== -1 ? tomorrowStart : undefined);
+  function applyLiveStatus(data) {
+    if (!data) {
+      return;
     }
 
-    var outageRanges = todayBlock.match(/\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/g);
-    var hasNoData = /Немає даних/i.test(todayBlock);
-    var warningMatch = text.match(/Увага![^.]*\./i);
-
-    if (outageRanges && outageRanges.length) {
-      return {
-        status: 'Планові відключення сьогодні: ' + outageRanges.join(', '),
-        meta: [
-          queueMatch ? queueMatch[0] : '',
-          dateMatch ? dateMatch[1] : '',
-          warningMatch ? warningMatch[0] : ''
-        ].filter(Boolean).join(' ')
-      };
+    if (data.power) {
+      setText('powerStatusText', data.power.status || 'Немає даних');
+      setText('powerStatusMeta', data.power.meta || 'Дані тимчасово недоступні.');
+      setHref('powerStatusLink', data.power.sourceUrl);
     }
 
-    if (hasNoData) {
-      return {
-        status: 'На сьогодні для 3.1 черги планові періоди не вказані',
-        meta: [
-          queueMatch ? queueMatch[0] : '',
-          dateMatch ? dateMatch[1] : '',
-          warningMatch ? warningMatch[0] : 'Можливі аварійні або превентивні відключення без окремого графіка.'
-        ].filter(Boolean).join(' ')
-      };
+    if (data.alert) {
+      setText('alertStatusText', data.alert.status || 'Немає даних');
+      setText('alertStatusMeta', data.alert.meta || 'Дані тимчасово недоступні.');
+      setHref('alertStatusLink', data.alert.sourceUrl);
     }
-
-    return {
-      status: 'Не вдалося точно зчитати графік відключень',
-      meta: 'Відкрийте джерело нижче, щоб переглянути актуальний статус для черги 3.1.'
-    };
   }
 
-  async function loadPowerStatus() {
+  async function loadLiveStatus() {
     try {
-      var html;
-      try {
-        html = await fetchText(POWER_PROXY_URL);
-      } catch (proxyError) {
-        html = await fetchText(POWER_URL);
-      }
-
-      var result = extractPowerStatus(html);
-      setText('powerStatusText', result.status);
-      setText('powerStatusMeta', result.meta);
+      var data = await fetchJson(LIVE_STATUS_URL);
+      applyLiveStatus(data);
     } catch (error) {
-      setText('powerStatusText', 'Не вдалося оновити графік автоматично');
-      setText('powerStatusMeta', 'Спробуйте відкрити повне джерело: chernigiv.energy-ua.info.');
+      setText('powerStatusText', 'Немає локальних даних про відключення');
+      setText('powerStatusMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
+      setText('alertStatusText', 'Немає локальних даних про тривогу');
+      setText('alertStatusMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
     }
+  }
+
+  async function loadFormConfig() {
+    var button = byId('meterFormButton');
+    var hint = byId('meterFormHint');
+
+    if (!button || !hint) {
+      return;
+    }
+
+    try {
+      var config = await fetchJson(FORM_CONFIG_URL);
+
+      if (config.formUrl) {
+        button.href = config.formUrl;
+        button.removeAttribute('aria-disabled');
+        hint.textContent = config.hint || 'Форма готова до заповнення мешканцями.';
+        return;
+      }
+    } catch (error) {
+      // Fall through to disabled state below.
+    }
+
+    button.href = '#meter';
+    button.setAttribute('aria-disabled', 'true');
+    hint.textContent = 'Публічне посилання на Google-форму ще не підключено.';
   }
 
   async function loadWeather() {
@@ -173,7 +175,8 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    loadPowerStatus();
+    loadLiveStatus();
     loadWeather();
+    loadFormConfig();
   });
 })();

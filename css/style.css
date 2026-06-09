@@ -139,10 +139,33 @@ img {
 }
 
 .hero {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 124px);
   padding: 72px 0 44px;
+  display: flex;
+  align-items: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(247, 243, 234, 0.62) 0%, rgba(247, 243, 234, 0.22) 44%, rgba(34, 58, 40, 0.36) 100%),
+    radial-gradient(circle at 12% 20%, rgba(111, 141, 96, 0.26), transparent 28%);
+}
+
+.hero__background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
 
 .hero__grid {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
   gap: 24px;
@@ -165,14 +188,13 @@ img {
   position: relative;
   overflow: hidden;
   padding: 48px;
-  background:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.7)),
-    url('../img/image1.jpg') center/cover no-repeat;
+  backdrop-filter: blur(6px);
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.62));
 }
 
 .hero__content > * {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .hero__video,
@@ -186,19 +208,21 @@ img {
 .hero__video {
   z-index: 0;
   object-fit: cover;
-  opacity: 0.26;
+  opacity: 0.92;
 }
 
 .hero__video-embed {
   border: 0;
   pointer-events: none;
-  transform: scale(1.35);
+  transform: scale(1.24);
   transform-origin: center;
 }
 
 .hero__video-fallback {
-  z-index: 0;
-  background: linear-gradient(135deg, rgba(247, 243, 234, 0.72), rgba(255, 255, 255, 0.28));
+  z-index: 1;
+  background:
+    linear-gradient(135deg, rgba(247, 243, 234, 0.24), rgba(255, 255, 255, 0.08)),
+    radial-gradient(circle at center, rgba(111, 141, 96, 0.2), transparent 62%);
 }
 
 .eyebrow {
@@ -261,6 +285,11 @@ img {
 
 .button:hover {
   transform: translateY(-2px);
+}
+
+.button[aria-disabled='true'] {
+  pointer-events: none;
+  opacity: 0.62;
 }
 
 .button--primary {
@@ -658,6 +687,20 @@ section {
   color: rgba(255, 255, 255, 0.82);
 }
 
+.meter__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.meter__hint {
+  max-width: 320px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+}
+
 .site-footer {
   margin-top: 28px;
   padding: 48px 0 56px;
@@ -861,6 +904,7 @@ section {
   }
 
   .hero {
+    min-height: auto;
     padding-top: 38px;
   }
 

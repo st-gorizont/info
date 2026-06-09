@@ -1,0 +1,13 @@
+{
+  "updatedAt": "2026-06-09T19:57:00+03:00",
+  "power": {
+    "status": "Планові відключення сьогодні: з 12:00 до 15:00",
+    "meta": "Черга 3.1, Чернігівська область. Дані взяті з energy-ua.info та будуть оновлюватися автоматично.",
+    "sourceUrl": "https://chernigiv.energy-ua.info/cherga/3-1"
+  },
+  "alert": {
+    "status": "Повітряна тривога оголошена",
+    "meta": "Чернігівський район: оголошено о 18:57 9 червня 2026 року. Для с. Жавинка орієнтуйтесь саме на цей статус.",
+    "sourceUrl": "https://alarmmap.online/ua/atu/chernigivska-oblast/chernigivskij-rayon/air"
+  }
+}

@@ -43,17 +43,19 @@
 
   <main>
     <section class="hero">
+      <div class="hero__background" aria-hidden="true">
+        <iframe
+          class="hero__video hero__video-embed"
+          src="https://www.youtube.com/embed/F56G0T6pX-E?autoplay=1&mute=1&controls=0&loop=1&playlist=F56G0T6pX-E&playsinline=1&modestbranding=1&rel=0"
+          title="River Desna"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
+        <div class="hero__video-fallback"></div>
+      </div>
       <div class="container hero__grid">
         <div class="hero__content">
-          <iframe
-            class="hero__video hero__video-embed"
-            src="https://www.youtube.com/embed/F56G0T6pX-E?autoplay=1&mute=1&controls=0&loop=1&playlist=F56G0T6pX-E&playsinline=1&modestbranding=1&rel=0"
-            title="Річка Десна"
-            loading="lazy"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            referrerpolicy="strict-origin-when-cross-origin"
-          ></iframe>
-          <div class="hero__video-fallback" aria-hidden="true"></div>
           <p class="eyebrow">Офіційна сторінка товариства</p>
           <h1>Уся важлива інформація СТ «Горизонт» в одному місці</h1>
           <p class="hero__lead">
@@ -129,26 +131,19 @@
             </div>
             <h3>Графік відключень</h3>
             <p class="live-card__status" id="powerStatusText">Завантаження актуального статусу…</p>
-            <p class="live-card__meta" id="powerStatusMeta">Перевіряємо поточні дані по Чернігівській області.</p>
-            <a class="live-card__link" href="https://chernigiv.energy-ua.info/cherga/3-1" target="_blank" rel="noopener noreferrer">Відкрити повне джерело</a>
+            <p class="live-card__meta" id="powerStatusMeta">Оновлюємо дані для черги 3.1 у Чернігівській області.</p>
+            <a class="live-card__link" id="powerStatusLink" href="https://chernigiv.energy-ua.info/cherga/3-1" target="_blank" rel="noopener noreferrer">Відкрити повне джерело</a>
           </article>
 
           <article class="live-card">
             <div class="live-card__head">
               <span class="info-card__tag">Тривога</span>
-              <p class="live-card__source">Орієнтир для с. Жавинка: Чернігівська область</p>
+              <p class="live-card__source">Чернігівський район, орієнтир для с. Жавинка</p>
             </div>
             <h3>Повітряна тривога</h3>
-            <p class="live-card__meta">Нижче вбудовано актуальну міні-карту тривог. Для Жавинки орієнтуйтесь на статус Чернігівської області.</p>
-            <div class="alert-embed">
-              <iframe
-                src="https://alerts.in.ua/mini"
-                title="Мапа повітряних тривог України"
-                loading="lazy"
-                referrerpolicy="no-referrer"
-              ></iframe>
-            </div>
-            <a class="live-card__link" href="https://alerts.in.ua/" target="_blank" rel="noopener noreferrer">Відкрити повну карту тривог</a>
+            <p class="live-card__status" id="alertStatusText">Завантаження актуального статусу…</p>
+            <p class="live-card__meta" id="alertStatusMeta">Перевіряємо поточний стан для Чернігівського району.</p>
+            <a class="live-card__link" id="alertStatusLink" href="https://alarmmap.online/ua/atu/chernigivska-oblast/chernigivskij-rayon/air" target="_blank" rel="noopener noreferrer">Відкрити статус району</a>
           </article>
         </div>
 
@@ -281,9 +276,13 @@
           <p class="eyebrow">Облік</p>
           <h2>Передача показників лічильника через Google-форму</h2>
           <p>
-            У цьому розділі буде розміщено Google-форму для передачі показників електролічильника:
-            номер ділянки або будинку, поточний показник і дата подання.
+            Передавайте показники електролічильника через окрему Google-форму.
+            Для подання потрібні номер ділянки або будинку, ПІБ та поточний показник.
           </p>
+        </div>
+        <div class="meter__actions">
+          <a class="button button--primary" id="meterFormButton" href="#" target="_blank" rel="noopener noreferrer">Відкрити форму подання</a>
+          <p class="meter__hint" id="meterFormHint">Після підключення форми тут з’явиться активне посилання для мешканців.</p>
         </div>
       </div>
     </section>
@@ -348,3 +347,4 @@
   <script src="js/live-widgets.js"></script>
 </body>
 </html>
+
