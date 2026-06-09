@@ -291,7 +291,9 @@ section {
 .card-grid,
 .pricing-grid,
 .document-list,
-.news-grid {
+.news-grid,
+.details-grid,
+.payment-grid {
   display: grid;
   gap: 18px;
 }
@@ -302,14 +304,18 @@ section {
 
 .pricing-grid,
 .document-list,
-.news-grid {
+.news-grid,
+.details-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .info-card,
 .pricing-card,
 .document-item,
-.news-card {
+.news-card,
+.detail-card,
+.schedule-card,
+.payment-box {
   min-height: 100%;
   padding: 26px;
   border: 1px solid var(--line);
@@ -333,6 +339,10 @@ section {
   background: rgba(111, 141, 96, 0.12);
 }
 
+.info-section {
+  padding-top: 12px;
+}
+
 .info-card__tag {
   display: inline-flex;
   margin-bottom: 18px;
@@ -348,12 +358,37 @@ section {
 .info-card h3,
 .pricing-card h3,
 .document-item h3,
-.news-card h3 {
+.news-card h3,
+.detail-card h3,
+.schedule-card h3,
+.payment-box h3 {
   font-family: 'Manrope', sans-serif;
   font-size: 24px;
   line-height: 1.2;
   margin-bottom: 12px;
   color: var(--forest-deep);
+}
+
+.detail-card p,
+.schedule-card p,
+.payment-box p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.details-grid.meter-grid {
+  align-items: stretch;
+}
+
+.meter-list {
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.meter-list li + li {
+  margin-top: 4px;
 }
 
 .about__grid {
@@ -400,6 +435,52 @@ section {
   color: var(--forest);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.schedule-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 18px;
+}
+
+.schedule-table {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  overflow: hidden;
+  border-radius: 18px;
+  margin-top: 14px;
+}
+
+.schedule-table > div {
+  padding: 12px 14px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.schedule-table__head {
+  font-weight: 800;
+  color: var(--forest-deep);
+  background: rgba(111, 141, 96, 0.14) !important;
+}
+
+.schedule-note {
+  margin-top: 14px;
+}
+
+.payment-box {
+  margin-top: 18px;
+}
+
+.payment-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 16px;
+}
+
+.payment-grid p {
+  margin: 0;
 }
 
 .notice-box {
@@ -544,13 +625,16 @@ section {
   .card-grid,
   .pricing-grid,
   .document-list,
-  .news-grid {
+  .news-grid,
+  .details-grid,
+  .payment-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero__grid,
   .about__grid,
-  .footer__grid {
+  .footer__grid,
+  .schedule-shell {
     grid-template-columns: 1fr;
   }
 }
@@ -638,7 +722,9 @@ section {
   .card-grid,
   .pricing-grid,
   .document-list,
-  .news-grid {
+  .news-grid,
+  .details-grid,
+  .payment-grid {
     grid-template-columns: 1fr;
   }
 
