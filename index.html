@@ -45,9 +45,14 @@
     <section class="hero">
       <div class="container hero__grid">
         <div class="hero__content">
-          <video class="hero__video" autoplay muted loop playsinline poster="img/image1.jpg">
-            <source src="video/desna.mp4" type="video/mp4">
-          </video>
+          <iframe
+            class="hero__video hero__video-embed"
+            src="https://www.youtube.com/embed/F56G0T6pX-E?autoplay=1&mute=1&controls=0&loop=1&playlist=F56G0T6pX-E&playsinline=1&modestbranding=1&rel=0"
+            title="Річка Десна"
+            loading="lazy"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
           <div class="hero__video-fallback" aria-hidden="true"></div>
           <p class="eyebrow">Офіційна сторінка товариства</p>
           <h1>Уся важлива інформація СТ «Горизонт» в одному місці</h1>
@@ -276,60 +281,9 @@
           <p class="eyebrow">Облік</p>
           <h2>Передача показників лічильника через Google-форму</h2>
           <p>
-            Найзручніший варіант для голови кооперативу — збір показників через Google Form
-            з автоматичним записом у Google Sheets і фіксацією дати подання.
+            У цьому розділі буде розміщено Google-форму для передачі показників електролічильника:
+            номер ділянки або будинку, поточний показник і дата подання.
           </p>
-        </div>
-
-        <a class="button button--primary" href="#meter-form">Продумана схема подання</a>
-      </div>
-    </section>
-
-    <section class="info-section" id="meter-form">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Google Form</p>
-          <h2>Що має бути у формі подання показників</h2>
-        </div>
-
-        <div class="details-grid meter-grid">
-          <article class="detail-card">
-            <h3>Обов'язкові поля</h3>
-            <ul class="meter-list">
-              <li>№ будинку або № ділянки</li>
-              <li>ПІБ</li>
-              <li>Поточний показник лічильника</li>
-              <li>Контактний телефон</li>
-            </ul>
-          </article>
-
-          <article class="detail-card">
-            <h3>Що фіксується автоматично</h3>
-            <ul class="meter-list">
-              <li>Дата і час подання</li>
-              <li>Порядковий запис у таблиці</li>
-              <li>Можливість сортування по даті</li>
-              <li>Фільтр по ділянках</li>
-            </ul>
-          </article>
-
-          <article class="detail-card">
-            <h3>Що ще корисно додати</h3>
-            <ul class="meter-list">
-              <li>Фото лічильника</li>
-              <li>Попередній показник</li>
-              <li>Коментар мешканця</li>
-              <li>Прапорець «оплата вже здійснена»</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="notice-box">
-          <p><strong>Що це дає голові кооперативу:</strong> усі показники автоматично збираються в одну Google-таблицю, можна сортувати по даті, шукати по номеру ділянки, швидко бачити пропуски та завантажувати список за місяць без ручного переписування.</p>
-        </div>
-
-        <div class="notice-box">
-          <p><strong>Щоб підключити це на сайт повністю:</strong> мені потрібне лише посилання на готову Google-форму. Я одразу вставлю кнопку або вбудую її на сторінку.</p>
         </div>
       </div>
     </section>
