@@ -48,6 +48,21 @@
     }
   }
 
+  function setOptionalText(id, text) {
+    var node = byId(id);
+    if (!node) {
+      return;
+    }
+
+    if (text) {
+      node.hidden = false;
+      node.textContent = text;
+    } else {
+      node.hidden = true;
+      node.textContent = '';
+    }
+  }
+
   function weatherLabel(code) {
     return Object.prototype.hasOwnProperty.call(weatherCodes, code)
       ? weatherCodes[code]
@@ -190,10 +205,11 @@
     try {
       var config = await fetchJson(FEEDBACK_CONFIG_URL);
       webhookUrl = config.webhookUrl || '';
-      note.textContent = config.hint || note.textContent;
-      status.textContent = config.statusText || status.textContent;
+      setOptionalText('feedbackFormNote', config.hint || '');
+      setOptionalText('feedbackStatusHint', config.statusText || '');
     } catch (error) {
-      note.textContent = 'Не вдалося завантажити конфігурацію форми зворотного зв\'язку.';
+      setOptionalText('feedbackFormNote', '');
+      setOptionalText('feedbackStatusHint', '');
     }
 
     if (!webhookUrl) {
@@ -219,11 +235,13 @@
       };
 
       if (!payload.name || !payload.plot || !payload.phone || !payload.message) {
+        note.hidden = false;
         note.textContent = 'Заповніть усі поля форми.';
         return;
       }
 
       submit.disabled = true;
+      note.hidden = false;
       note.textContent = 'Надсилаємо повідомлення…';
 
       try {
@@ -238,8 +256,10 @@
         }
 
         form.reset();
+        note.hidden = false;
         note.textContent = 'Повідомлення успішно відправлено.';
       } catch (error) {
+        note.hidden = false;
         note.textContent = 'Не вдалося відправити звернення. Спробуйте пізніше.';
       } finally {
         submit.disabled = false;

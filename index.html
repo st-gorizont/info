@@ -295,9 +295,8 @@
           <h2>Форма зворотного зв'язку для правління</h2>
           <p>
             Залиште звернення для правління товариства: ім'я, номер ділянки, телефон і текст повідомлення.
-            Після підключення захищеного каналу повідомлення будуть автоматично надходити у Telegram.
           </p>
-          <p class="feedback__status" id="feedbackStatusHint">Налаштовуємо безпечну доставку повідомлень у Telegram.</p>
+          <p class="feedback__status" id="feedbackStatusHint" hidden></p>
         </div>
 
         <form class="feedback-form" id="feedbackForm">
@@ -323,7 +322,7 @@
 
           <div class="feedback-form__actions">
             <button class="button button--primary" id="feedbackSubmit" type="submit">Надіслати звернення</button>
-            <p class="feedback-form__note" id="feedbackFormNote">Форма буде активна після підключення захищеного Telegram webhook.</p>
+            <p class="feedback-form__note" id="feedbackFormNote" hidden></p>
           </div>
         </form>
       </div>
