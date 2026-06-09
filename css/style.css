@@ -159,7 +159,11 @@ img {
 
 .hero__background {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
   overflow: hidden;
 }
 
@@ -212,10 +216,16 @@ img {
 }
 
 .hero__video-embed {
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-width: 177.78vh;
+  min-height: 100%;
   border: 0;
   pointer-events: none;
-  transform: scale(1.24);
-  transform-origin: center;
+  transform: translate(-50%, -50%) scale(1.08);
+  transform-origin: center center;
 }
 
 .hero__video-fallback {
