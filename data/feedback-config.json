@@ -1,5 +1,5 @@
 {
-    "webhookUrl":  "",
+    "webhookUrl":  "https://script.google.com/macros/s/AKfycbxIi2RVyLZGaIkurXfXdZu1gfX4V1iCdwIo8qX5v8BOiSHm1tyfXSieedIU4qB-KXrx/exec",
     "transport":  "apps-script",
     "statusText":  "",
     "hint":  ""
