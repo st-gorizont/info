@@ -324,6 +324,9 @@
         </div>
 
         <form class="feedback-form" id="feedbackForm">
+          <input type="text" name="company" class="field-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <input type="hidden" name="clientStartedAt" id="feedbackClientStartedAt" value="">
+
           <label class="field">
             <span>Ім'я</span>
             <input type="text" name="name" autocomplete="name" required>

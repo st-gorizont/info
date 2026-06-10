@@ -117,14 +117,14 @@
       var data = await fetchJson(LIVE_STATUS_URL);
       applyLiveStatus(data);
     } catch (error) {
-      setText('powerStatusText', 'Немає локальних даних про відключення');
-      setText('powerStatusMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
-      setText('alertStatusText', 'Немає локальних даних про тривогу');
-      setText('alertStatusMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
-      setText('waterLevelText', 'Немає локальних даних про рівень води');
-      setText('waterLevelMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
-      setText('fishingForecastText', 'Немає локальних даних про прогноз рибалки');
-      setText('fishingForecastMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
+      setText('powerStatusText', 'Графік тимчасово недоступний');
+      setText('powerStatusMeta', 'Спробуйте відкрити офіційне джерело нижче.');
+      setText('alertStatusText', 'Статус тривоги тимчасово недоступний');
+      setText('alertStatusMeta', 'Спробуйте оновити сторінку трохи пізніше.');
+      setText('waterLevelText', 'Дані про рівень води тимчасово недоступні');
+      setText('waterLevelMeta', 'Спробуйте оновити сторінку трохи пізніше.');
+      setText('fishingForecastText', 'Прогноз для рибалки тимчасово недоступний');
+      setText('fishingForecastMeta', 'Спробуйте оновити сторінку трохи пізніше.');
     }
   }
 
@@ -151,7 +151,7 @@
 
     button.href = '#meter';
     button.setAttribute('aria-disabled', 'true');
-    hint.textContent = 'Публічне посилання на Google-форму ще не підключено.';
+    hint.textContent = 'Форма подання тимчасово недоступна.';
   }
 
   async function loadWeather() {
@@ -211,16 +211,23 @@
     var submit = byId('feedbackSubmit');
     var note = byId('feedbackFormNote');
     var status = byId('feedbackStatusHint');
+    var startedAt = byId('feedbackClientStartedAt');
 
     if (!form || !submit || !note || !status) {
       return;
     }
 
+    if (startedAt) {
+      startedAt.value = new Date().toISOString();
+    }
+
     var webhookUrl = '';
+    var transport = 'apps-script';
 
     try {
       var config = await fetchJson(FEEDBACK_CONFIG_URL);
       webhookUrl = config.webhookUrl || '';
+      transport = config.transport || 'apps-script';
       setOptionalText('feedbackFormNote', config.hint || '');
       setOptionalText('feedbackStatusHint', config.statusText || '');
     } catch (error) {
@@ -231,6 +238,7 @@
     if (!webhookUrl) {
       submit.setAttribute('aria-disabled', 'true');
       submit.disabled = true;
+      setOptionalText('feedbackFormNote', 'Форма звернення тимчасово недоступна.');
       return;
     }
 
@@ -246,8 +254,12 @@
         plot: String(formData.get('plot') || '').trim(),
         phone: String(formData.get('phone') || '').trim(),
         message: String(formData.get('message') || '').trim(),
+        company: String(formData.get('company') || '').trim(),
+        clientStartedAt: String(formData.get('clientStartedAt') || '').trim(),
         submittedAt: new Date().toISOString(),
-        source: window.location.href
+        source: window.location.href,
+        userAgent: navigator.userAgent || '',
+        formType: 'feedback'
       };
 
       if (!payload.name || !payload.plot || !payload.phone || !payload.message) {
@@ -261,17 +273,28 @@
       note.textContent = 'Надсилаємо повідомлення…';
 
       try {
-        var response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        if (transport === 'apps-script') {
+          await fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: new URLSearchParams(payload)
+          });
+        } else {
+          var response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
 
-        if (!response.ok) {
-          throw new Error('HTTP ' + response.status);
+          if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+          }
         }
 
         form.reset();
+        if (startedAt) {
+          startedAt.value = new Date().toISOString();
+        }
         note.hidden = false;
         note.textContent = 'Повідомлення успішно відправлено.';
       } catch (error) {

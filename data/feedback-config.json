@@ -1,5 +1,6 @@
-﻿{
-  "webhookUrl": "",
-  "statusText": "",
-  "hint": ""
+{
+    "webhookUrl":  "",
+    "transport":  "apps-script",
+    "statusText":  "",
+    "hint":  ""
 }
