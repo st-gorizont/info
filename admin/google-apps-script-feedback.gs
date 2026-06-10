@@ -1,4 +1,5 @@
 const SCRIPT_PROPS = PropertiesService.getScriptProperties();
+const DEFAULT_SITE_SPREADSHEET_ID = '14VoX10DazCDKpLNIoK6O5iVZqWL1mmuR5l2ZybeXx0A';
 const SHEET_HEADERS = [
   'created_at',
   'form_type',
@@ -12,6 +13,17 @@ const SHEET_HEADERS = [
   'user_agent',
   'ip'
 ];
+const UA_PHONE_PATTERN = /^\+380(39|50|63|66|67|68|73|89|91|92|93|94|95|96|97|98|99)\d{7}$/;
+
+function doGet(e) {
+  const action = e && e.parameter ? String(e.parameter.action || '').trim() : '';
+
+  if (action === 'siteData') {
+    return siteDataResponse_(e);
+  }
+
+  return htmlResponse_(true, 'ready', '');
+}
 
 function doOptions() {
   return htmlResponse_(true, 'ready', '');
@@ -86,9 +98,89 @@ function validatePayload_(payload) {
     throw new Error('Заповнені не всі обовʼязкові поля.');
   }
 
+  if (!UA_PHONE_PATTERN.test(payload.phone)) {
+    throw new Error('Телефон має бути у форматі +380671234567 з коректним українським кодом оператора.');
+  }
+
   if (payload.name.length > 120 || payload.plot.length > 80 || payload.phone.length > 50 || payload.message.length > 5000) {
     throw new Error('Звернення перевищує допустимий розмір.');
   }
+}
+
+function siteDataResponse_(e) {
+  const callback = e && e.parameter ? String(e.parameter.callback || '').trim() : '';
+  const siteData = buildSiteData_();
+  const payload = JSON.stringify(siteData);
+
+  if (callback && /^[A-Za-z0-9_.$]+$/.test(callback)) {
+    return ContentService
+      .createTextOutput(`${callback}(${payload});`)
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+
+  return ContentService
+    .createTextOutput(payload)
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function buildSiteData_() {
+  const spreadsheetId = SCRIPT_PROPS.getProperty('SITE_SPREADSHEET_ID') || DEFAULT_SITE_SPREADSHEET_ID;
+  const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+
+  return {
+    texts: toTextBlocks_(readRows_(spreadsheet, 'Тексти')),
+    heroFacts: sortRows_(readRows_(spreadsheet, 'Оперативно')),
+    serviceCards: sortRows_(readRows_(spreadsheet, 'Картки')),
+    wateringCards: sortRows_(readRows_(spreadsheet, 'Полив')),
+    bus: sortRows_(readRows_(spreadsheet, 'Автобус')),
+    rates: sortRows_(readRows_(spreadsheet, 'Тарифи').filter((row) => row.type === 'тариф')),
+    paymentDetails: sortRows_(readRows_(spreadsheet, 'Реквізити')),
+    news: sortRows_(readRows_(spreadsheet, 'Новини').filter((row) => String(row.active).toUpperCase() !== 'FALSE'))
+  };
+}
+
+function readRows_(spreadsheet, sheetName) {
+  const sheet = spreadsheet.getSheetByName(sheetName);
+  if (!sheet) {
+    return [];
+  }
+
+  const values = sheet.getDataRange().getDisplayValues();
+  if (!values || values.length < 2) {
+    return [];
+  }
+
+  const headers = values[0].map((header) => String(header || '').trim());
+  return values.slice(1)
+    .filter((row) => row.some((cell) => String(cell || '').trim() !== ''))
+    .map((row) => {
+      const item = {};
+      headers.forEach((header, index) => {
+        item[header] = String(row[index] || '').trim();
+      });
+      return item;
+    });
+}
+
+function toTextBlocks_(rows) {
+  return rows.reduce((acc, row) => {
+    const section = row.section || '';
+    const key = row.key || '';
+    if (!section || !key) {
+      return acc;
+    }
+
+    if (!acc[section]) {
+      acc[section] = {};
+    }
+
+    acc[section][key] = row.value || '';
+    return acc;
+  }, {});
+}
+
+function sortRows_(rows) {
+  return rows.slice().sort((left, right) => Number(left.sort || 0) - Number(right.sort || 0));
 }
 
 function guardSpam_(payload) {

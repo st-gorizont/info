@@ -12,8 +12,8 @@
   <header class="site-header" id="top">
     <div class="top-strip">
       <div class="container top-strip__inner">
-        <p>Садове товариство «Горизонт»</p>
-        <a href="#contacts">Зв'язатися з правлінням</a>
+        <p id="siteTopStripText">Садове товариство «Горизонт»</p>
+        <a href="#contacts" id="siteContactLinkText">Зв'язатися з правлінням</a>
       </div>
     </div>
 
@@ -57,22 +57,22 @@
       </div>
       <div class="container hero__grid">
         <div class="hero__content">
-          <p class="eyebrow">Офіційна сторінка товариства</p>
-          <h1>Уся важлива інформація СТ «Горизонт» в одному місці</h1>
-          <p class="hero__lead">
+          <p class="eyebrow" id="heroEyebrow">Офіційна сторінка товариства</p>
+          <h1 id="heroTitle">Уся важлива інформація СТ «Горизонт» в одному місці</h1>
+          <p class="hero__lead" id="heroLead">
             На сайті зібрані графік поливу, автобусний розклад, реквізити для оплати,
             тарифи, оголошення та окремий блок для зручної передачі показників
             електролічильника.
           </p>
           <div class="hero__actions">
-            <a class="button button--primary" href="#services">Перейти до сервісів</a>
-            <a class="button button--ghost" href="#rates">Переглянути тарифи</a>
+            <a class="button button--primary" href="#services" id="heroPrimaryButton">Перейти до сервісів</a>
+            <a class="button button--ghost" href="#rates" id="heroSecondaryButton">Переглянути тарифи</a>
           </div>
         </div>
 
         <aside class="hero__panel">
           <h2>Оперативно</h2>
-          <ul class="hero__list">
+          <ul class="hero__list" id="heroFactsList">
             <li>Графік поливу: середа та субота</li>
             <li>Електроенергія: 5 грн/кВт·год</li>
             <li>Щорічний внесок: 300 грн за сотку</li>
@@ -85,11 +85,11 @@
     <section class="services" id="services">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Швидкий доступ</p>
-          <h2>Основні розділи для мешканців</h2>
+          <p class="eyebrow" id="servicesEyebrow">Швидкий доступ</p>
+          <h2 id="servicesTitle">Основні розділи для мешканців</h2>
         </div>
 
-        <div class="card-grid">
+        <div class="card-grid" id="serviceCardsGrid">
           <a class="info-card" href="#watering">
             <span class="info-card__tag">01</span>
             <h3>Графік поливу</h3>
@@ -192,11 +192,11 @@
     <section class="info-section" id="watering">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Полив</p>
-          <h2>Графік поливу</h2>
+          <p class="eyebrow" id="wateringEyebrow">Полив</p>
+          <h2 id="wateringTitle">Графік поливу</h2>
         </div>
 
-        <div class="details-grid">
+        <div class="details-grid" id="wateringCardsGrid">
           <article class="detail-card">
             <h3>Дні поливу</h3>
             <p><strong>Середа</strong> та <strong>субота</strong></p>
@@ -218,15 +218,15 @@
     <section class="info-section" id="bus">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Транспорт</p>
-          <h2>Графік автобуса</h2>
+          <p class="eyebrow" id="busEyebrow">Транспорт</p>
+          <h2 id="busTitle">Графік автобуса</h2>
         </div>
 
         <div class="schedule-shell">
           <div class="schedule-card">
             <h3>Розклад руху</h3>
-            <p><strong>Ліва колонка</strong> — відправлення від магазину «Дитячий світ» до дач. <strong>Права колонка</strong> — відправлення з дач у зворотному напрямку.</p>
-            <div class="schedule-table">
+            <p id="busIntro"><strong>Ліва колонка</strong> — відправлення від магазину «Дитячий світ» до дач. <strong>Права колонка</strong> — відправлення з дач у зворотному напрямку.</p>
+            <div class="schedule-table" id="busScheduleTable">
               <div class="schedule-table__head">Від «Дитячого світу»</div>
               <div class="schedule-table__head">Від дач</div>
 
@@ -243,10 +243,12 @@
           </div>
 
           <div class="schedule-card">
-            <h3>Вартість проїзду</h3>
-            <p><strong>У напрямку до села / міста</strong> — 25 грн</p>
-            <p><strong>У напрямку до дач</strong> — 30 грн</p>
-            <p class="schedule-note">Розклад подано у двох колонках, щоб було одразу видно рейси до дач і у зворотному напрямку.</p>
+            <h3 id="busFareTitle">Вартість проїзду</h3>
+            <div id="busFareItems">
+              <p><strong>У напрямку до села / міста</strong> — 25 грн</p>
+              <p><strong>У напрямку до дач</strong> — 30 грн</p>
+            </div>
+            <p class="schedule-note" id="busScheduleNote">Розклад подано у двох колонках, щоб було одразу видно рейси до дач і у зворотному напрямку.</p>
           </div>
         </div>
       </div>
@@ -255,11 +257,11 @@
     <section class="rates" id="rates">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Фінансова інформація</p>
-          <h2>Тарифи та реквізити для оплати</h2>
+          <p class="eyebrow" id="ratesEyebrow">Фінансова інформація</p>
+          <h2 id="ratesTitle">Тарифи та реквізити для оплати</h2>
         </div>
 
-        <div class="pricing-grid">
+        <div class="pricing-grid" id="ratesCardsGrid">
           <article class="pricing-card">
             <h3>Електроенергія</h3>
             <p class="price-value">5 грн/кВт·год</p>
@@ -280,8 +282,8 @@
         </div>
 
         <div class="payment-box">
-          <h3>Реквізити для сплати внесків та електроенергії</h3>
-          <div class="payment-grid">
+          <h3 id="paymentTitle">Реквізити для сплати внесків та електроенергії</h3>
+          <div class="payment-grid" id="paymentDetailsGrid">
             <p><strong>Код отримувача (ЄДРПОУ):</strong> 25620005</p>
             <p><strong>Отримувач платежу:</strong> СТ «ГОРИЗОНТ»</p>
             <p><strong>Рахунок:</strong> UA773052990000026007046311715</p>
@@ -289,7 +291,7 @@
             <p><strong>МФО:</strong> 305299</p>
           </div>
           <div class="notice-box">
-            <p><strong>Призначення платежу:</strong> членські внески — сума в грн; електроенергія — сума в грн, показник лічильника, № ділянки та ПІБ (обов'язково).</p>
+            <p><strong>Призначення платежу:</strong> <span id="paymentNoticeText">членські внески — сума в грн; електроенергія — сума в грн, показник лічильника, № ділянки та ПІБ (обов'язково).</span></p>
           </div>
         </div>
       </div>
@@ -298,9 +300,9 @@
     <section class="meter" id="meter">
       <div class="container meter__panel">
         <div>
-          <p class="eyebrow">Облік</p>
-          <h2>Передача показників лічильника</h2>
-          <p>
+          <p class="eyebrow" id="meterEyebrow">Облік</p>
+          <h2 id="meterTitle">Передача показників лічильника</h2>
+          <p id="meterText">
             Передавайте показники електролічильника через окрему форму.
             Для подання потрібні номер ділянки або будинку, ПІБ та поточний показник.
           </p>
@@ -315,9 +317,9 @@
     <section class="feedback" id="feedback">
       <div class="container feedback__grid">
         <div class="feedback__intro">
-          <p class="eyebrow">Звернення</p>
-          <h2>Форма зворотного зв'язку для правління</h2>
-          <p>
+          <p class="eyebrow" id="feedbackEyebrow">Звернення</p>
+          <h2 id="feedbackTitle">Форма зворотного зв'язку для правління</h2>
+          <p id="feedbackText">
             Залиште звернення для правління товариства: ім'я, номер ділянки, телефон і текст повідомлення.
           </p>
           <p class="feedback__status" id="feedbackStatusHint" hidden></p>
@@ -339,7 +341,7 @@
 
           <label class="field">
             <span>Телефон</span>
-            <input type="tel" name="phone" autocomplete="tel" required>
+            <input type="tel" name="phone" id="feedbackPhone" autocomplete="tel" inputmode="tel" placeholder="+380671234567" pattern="^\+380(39|50|63|66|67|68|73|89|91|92|93|94|95|96|97|98|99)\d{7}$" title="Вкажіть український мобільний номер у форматі +380671234567" required>
           </label>
 
           <label class="field field--wide">
@@ -358,11 +360,11 @@
     <section class="news" id="news">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Останні події</p>
-          <h2>Новини СТ «Горизонт»</h2>
+          <p class="eyebrow" id="newsEyebrow">Останні події</p>
+          <h2 id="newsTitle">Новини СТ «Горизонт»</h2>
         </div>
 
-        <div class="news-grid">
+        <div class="news-grid" id="newsGrid">
           <article class="news-card">
             <span class="news-card__date">Полив</span>
             <h3>2 бочки для поливу відремонтовано</h3>
@@ -388,15 +390,15 @@
   <footer class="site-footer" id="contacts">
     <div class="container footer__grid">
       <div>
-        <p class="eyebrow">Контакти</p>
-        <h2>Зв'язок з товариством</h2>
-        <p>Електронна пошта для звернень мешканців та організаційних питань товариства.</p>
+        <p class="eyebrow" id="contactsEyebrow">Контакти</p>
+        <h2 id="contactsTitle">Зв'язок з товариством</h2>
+        <p id="contactsText">Електронна пошта для звернень мешканців та організаційних питань товариства.</p>
       </div>
 
       <div class="contact-card">
-        <p><strong>Адреса:</strong> СТ «Горизонт», Україна</p>
-        <p><strong>Email:</strong> sadove.tovaristvo.gorizont@gmail.com</p>
-        <p><strong>Години зв'язку:</strong> Пн–Сб, 09:00–18:00</p>
+        <p><strong>Адреса:</strong> <span id="contactAddress">СТ «Горизонт», Україна</span></p>
+        <p><strong>Email:</strong> <span id="contactEmail">sadove.tovaristvo.gorizont@gmail.com</span></p>
+        <p><strong>Години зв'язку:</strong> <span id="contactHours">Пн–Сб, 09:00–18:00</span></p>
       </div>
     </div>
   </footer>

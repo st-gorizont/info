@@ -4,6 +4,7 @@
   var FEEDBACK_CONFIG_URL = 'data/feedback-config.json';
   var WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=51.4478&longitude=31.25672&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FKyiv&forecast_days=7';
   var FEEDBACK_MESSAGE_SOURCE = 'st-gorizont-feedback';
+  var SITE_DATA_CALLBACK_PREFIX = '__stGorizontSiteData__';
 
   var weatherCodes = {
     0: 'Ясно',
@@ -47,6 +48,44 @@
     if (node && href) {
       node.href = href;
     }
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function findOne(selector) {
+    return document.querySelector(selector);
+  }
+
+  function setNodeText(selector, text) {
+    var node = findOne(selector);
+    if (node && text) {
+      node.textContent = text;
+    }
+  }
+
+  function normalizeUAPhone(rawValue) {
+    var cleaned = String(rawValue || '').replace(/[^\d+]/g, '');
+
+    if (cleaned.indexOf('380') === 0) {
+      cleaned = '+' + cleaned;
+    } else if (cleaned.indexOf('80') === 0) {
+      cleaned = '+3' + cleaned;
+    } else if (cleaned.indexOf('0') === 0) {
+      cleaned = '+38' + cleaned;
+    }
+
+    return cleaned;
+  }
+
+  function isValidUAPhone(phone) {
+    return /^\+380(39|50|63|66|67|68|73|89|91|92|93|94|95|96|97|98|99)\d{7}$/.test(phone);
   }
 
   function setOptionalText(id, text) {
@@ -169,6 +208,240 @@
       throw new Error('HTTP ' + response.status);
     }
     return response.json();
+  }
+
+  function getTextBlock(siteData, section, key) {
+    if (!siteData || !siteData.texts || !siteData.texts[section]) {
+      return '';
+    }
+    return siteData.texts[section][key] || '';
+  }
+
+  function renderHeroFacts(items) {
+    var node = byId('heroFactsList');
+    if (!node || !items || !items.length) {
+      return;
+    }
+
+    node.innerHTML = items.map(function (item) {
+      return '<li>' + escapeHtml(item.text) + '</li>';
+    }).join('');
+  }
+
+  function renderServiceCards(items) {
+    var node = byId('serviceCardsGrid');
+    if (!node || !items || !items.length) {
+      return;
+    }
+
+    node.innerHTML = items.map(function (item) {
+      return (
+        '<a class="info-card" href="' + escapeHtml(item.anchor || '#') + '">' +
+          '<span class="info-card__tag">' + escapeHtml(item.tag || '') + '</span>' +
+          '<h3>' + escapeHtml(item.title || '') + '</h3>' +
+          '<p>' + escapeHtml(item.text || '') + '</p>' +
+        '</a>'
+      );
+    }).join('');
+  }
+
+  function renderWateringCards(items) {
+    var node = byId('wateringCardsGrid');
+    if (!node || !items || !items.length) {
+      return;
+    }
+
+    node.innerHTML = items.map(function (item) {
+      return (
+        '<article class="detail-card">' +
+          '<h3>' + escapeHtml(item.title || '') + '</h3>' +
+          '<p><strong>' + escapeHtml(item.value || '') + '</strong></p>' +
+        '</article>'
+      );
+    }).join('');
+  }
+
+  function renderBusData(items) {
+    var tableNode = byId('busScheduleTable');
+    var fareNode = byId('busFareItems');
+    var introText = '';
+    var fromLabel = 'Від «Дитячого світу»';
+    var toLabel = 'Від дач';
+    var fareTitle = 'Вартість проїзду';
+    var note = '';
+    var routes = [];
+    var fares = [];
+
+    if (!items || !items.length) {
+      return;
+    }
+
+    items.forEach(function (item) {
+      if (item.type === 'meta') {
+        if (item.title === 'intro') introText = item.value;
+        if (item.title === 'from_label') fromLabel = item.value;
+        if (item.title === 'to_label') toLabel = item.value;
+        if (item.title === 'fare_title') fareTitle = item.value;
+        if (item.title === 'note') note = item.value;
+      } else if (item.type === 'рейс') {
+        routes.push(item);
+      } else if (item.type === 'вартість') {
+        fares.push(item);
+      }
+    });
+
+    setText('busIntro', introText);
+    setText('busFareTitle', fareTitle);
+    setText('busScheduleNote', note);
+
+    if (tableNode && routes.length) {
+      tableNode.innerHTML =
+        '<div class="schedule-table__head">' + escapeHtml(fromLabel) + '</div>' +
+        '<div class="schedule-table__head">' + escapeHtml(toLabel) + '</div>' +
+        routes.map(function (item) {
+          return '<div>' + escapeHtml(item.title || '') + '</div><div>' + escapeHtml(item.value || '') + '</div>';
+        }).join('');
+    }
+
+    if (fareNode && fares.length) {
+      fareNode.innerHTML = fares.map(function (item) {
+        return '<p><strong>' + escapeHtml(item.title || '') + '</strong> — ' + escapeHtml(item.value || '') + '</p>';
+      }).join('');
+    }
+  }
+
+  function renderRates(items) {
+    var node = byId('ratesCardsGrid');
+    if (!node || !items || !items.length) {
+      return;
+    }
+
+    node.innerHTML = items.map(function (item) {
+      return (
+        '<article class="pricing-card">' +
+          '<h3>' + escapeHtml(item.title || '') + '</h3>' +
+          '<p class="price-value">' + escapeHtml(item.price || '') + '</p>' +
+          '<p>' + escapeHtml(item.text || '') + '</p>' +
+        '</article>'
+      );
+    }).join('');
+  }
+
+  function renderPaymentDetails(items) {
+    var node = byId('paymentDetailsGrid');
+    if (!node || !items || !items.length) {
+      return;
+    }
+
+    node.innerHTML = items.map(function (item) {
+      return '<p><strong>' + escapeHtml(item.label || '') + ':</strong> ' + escapeHtml(item.value || '') + '</p>';
+    }).join('');
+  }
+
+  function renderNews(items) {
+    var node = byId('newsGrid');
+    if (!node || !items || !items.length) {
+      return;
+    }
+
+    node.innerHTML = items.map(function (item) {
+      return (
+        '<article class="news-card">' +
+          '<span class="news-card__date">' + escapeHtml(item.category || '') + '</span>' +
+          '<h3>' + escapeHtml(item.title || '') + '</h3>' +
+          '<p>' + escapeHtml(item.text || '') + '</p>' +
+        '</article>'
+      );
+    }).join('');
+  }
+
+  function applySiteData(siteData) {
+    if (!siteData) {
+      return;
+    }
+
+    setText('siteTopStripText', getTextBlock(siteData, 'site', 'top_strip_text'));
+    setText('siteContactLinkText', getTextBlock(siteData, 'site', 'contact_link_text'));
+    setText('heroEyebrow', getTextBlock(siteData, 'hero', 'eyebrow'));
+    setText('heroTitle', getTextBlock(siteData, 'hero', 'title'));
+    setText('heroLead', getTextBlock(siteData, 'hero', 'lead'));
+    setText('heroPrimaryButton', getTextBlock(siteData, 'hero', 'primary_button_text'));
+    setText('heroSecondaryButton', getTextBlock(siteData, 'hero', 'secondary_button_text'));
+    setText('servicesEyebrow', getTextBlock(siteData, 'services', 'eyebrow'));
+    setText('servicesTitle', getTextBlock(siteData, 'services', 'title'));
+    setText('wateringEyebrow', getTextBlock(siteData, 'watering', 'eyebrow'));
+    setText('wateringTitle', getTextBlock(siteData, 'watering', 'title'));
+    setText('busEyebrow', getTextBlock(siteData, 'bus', 'eyebrow'));
+    setText('busTitle', getTextBlock(siteData, 'bus', 'title'));
+    setText('busIntro', getTextBlock(siteData, 'bus', 'intro'));
+    setText('ratesEyebrow', getTextBlock(siteData, 'rates', 'eyebrow'));
+    setText('ratesTitle', getTextBlock(siteData, 'rates', 'title'));
+    setText('paymentTitle', getTextBlock(siteData, 'rates', 'payment_title'));
+    setText('paymentNoticeText', getTextBlock(siteData, 'rates', 'payment_notice'));
+    setText('meterEyebrow', getTextBlock(siteData, 'meter', 'eyebrow'));
+    setText('meterTitle', getTextBlock(siteData, 'meter', 'title'));
+    setText('meterText', getTextBlock(siteData, 'meter', 'text'));
+    setText('meterFormButton', getTextBlock(siteData, 'meter', 'button_text'));
+    setText('feedbackEyebrow', getTextBlock(siteData, 'feedback', 'eyebrow'));
+    setText('feedbackTitle', getTextBlock(siteData, 'feedback', 'title'));
+    setText('feedbackText', getTextBlock(siteData, 'feedback', 'text'));
+    setText('newsEyebrow', getTextBlock(siteData, 'news', 'eyebrow'));
+    setText('newsTitle', getTextBlock(siteData, 'news', 'title'));
+    setText('contactsEyebrow', getTextBlock(siteData, 'contacts', 'eyebrow'));
+    setText('contactsTitle', getTextBlock(siteData, 'contacts', 'title'));
+    setText('contactsText', getTextBlock(siteData, 'contacts', 'text'));
+    setText('contactAddress', getTextBlock(siteData, 'contacts', 'address'));
+    setText('contactEmail', getTextBlock(siteData, 'contacts', 'email'));
+    setText('contactHours', getTextBlock(siteData, 'contacts', 'hours'));
+
+    renderHeroFacts(siteData.heroFacts || []);
+    renderServiceCards(siteData.serviceCards || []);
+    renderWateringCards(siteData.wateringCards || []);
+    renderBusData(siteData.bus || []);
+    renderRates(siteData.rates || []);
+    renderPaymentDetails(siteData.paymentDetails || []);
+    renderNews(siteData.news || []);
+  }
+
+  function loadSiteDataJsonp(baseUrl) {
+    return new Promise(function (resolve, reject) {
+      var callbackName = SITE_DATA_CALLBACK_PREFIX + Date.now();
+      var script = document.createElement('script');
+      var separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
+      var timeoutId = null;
+
+      window[callbackName] = function (payload) {
+        cleanup();
+        resolve(payload);
+      };
+
+      function cleanup() {
+        if (timeoutId) {
+          window.clearTimeout(timeoutId);
+        }
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+        try {
+          delete window[callbackName];
+        } catch (error) {
+          window[callbackName] = undefined;
+        }
+      }
+
+      script.src = baseUrl + separator + 'action=siteData&callback=' + encodeURIComponent(callbackName) + '&_ts=' + Date.now();
+      script.onerror = function () {
+        cleanup();
+        reject(new Error('Не вдалося завантажити дані сайту.'));
+      };
+
+      timeoutId = window.setTimeout(function () {
+        cleanup();
+        reject(new Error('Час очікування даних сайту вичерпано.'));
+      }, 25000);
+
+      document.body.appendChild(script);
+    });
   }
 
   function applyLiveStatus(data) {
@@ -301,6 +574,7 @@
     var note = byId('feedbackFormNote');
     var status = byId('feedbackStatusHint');
     var startedAt = byId('feedbackClientStartedAt');
+    var phoneField = byId('feedbackPhone');
 
     if (!form || !submit || !note || !status) {
       return;
@@ -319,6 +593,14 @@
       transport = config.transport || 'apps-script';
       setOptionalText('feedbackFormNote', config.hint || '');
       setOptionalText('feedbackStatusHint', config.statusText || '');
+
+      if (webhookUrl) {
+        loadSiteDataJsonp(webhookUrl)
+          .then(applySiteData)
+          .catch(function () {
+            return null;
+          });
+      }
     } catch (error) {
       setOptionalText('feedbackFormNote', '');
       setOptionalText('feedbackStatusHint', '');
@@ -338,10 +620,11 @@
       event.preventDefault();
 
       var formData = new FormData(form);
+      var normalizedPhone = normalizeUAPhone(formData.get('phone'));
       var payload = {
         name: String(formData.get('name') || '').trim(),
         plot: String(formData.get('plot') || '').trim(),
-        phone: String(formData.get('phone') || '').trim(),
+        phone: normalizedPhone,
         message: String(formData.get('message') || '').trim(),
         company: String(formData.get('company') || '').trim(),
         clientStartedAt: String(formData.get('clientStartedAt') || '').trim(),
@@ -355,6 +638,19 @@
         note.hidden = false;
         note.textContent = 'Заповніть усі поля форми.';
         return;
+      }
+
+      if (!isValidUAPhone(payload.phone)) {
+        note.hidden = false;
+        note.textContent = 'Вкажіть український мобільний номер у форматі +380671234567.';
+        if (phoneField) {
+          phoneField.focus();
+        }
+        return;
+      }
+
+      if (phoneField) {
+        phoneField.value = payload.phone;
       }
 
       submit.disabled = true;
