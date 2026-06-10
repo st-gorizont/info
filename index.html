@@ -120,31 +120,31 @@
     <section class="info-section" id="live-status">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Онлайн-статус</p>
-          <h2>Актуальні відключення світла та повітряна тривога</h2>
+          <p class="eyebrow" id="liveStatusEyebrow">Онлайн-статус</p>
+          <h2 id="liveStatusTitle">Актуальні відключення світла та повітряна тривога</h2>
         </div>
 
         <div class="live-grid">
           <article class="live-card" id="powerStatusCard">
             <div class="live-card__head">
               <span class="info-card__tag">Світло</span>
-              <p class="live-card__source">Джерело: energy-ua.info, 3.1 черга</p>
+              <p class="live-card__source">Джерело: bezsvitla.com.ua, 3.1 черга</p>
             </div>
             <h3>Графік відключень</h3>
             <p class="live-card__status" id="powerStatusText">Завантаження актуального статусу…</p>
             <p class="live-card__meta" id="powerStatusMeta">Оновлюємо дані для черги 3.1 у Чернігівській області.</p>
-            <a class="live-card__link" id="powerStatusLink" href="https://chernigiv.energy-ua.info/cherga/3-1" target="_blank" rel="noopener noreferrer">Відкрити повне джерело</a>
+            <a class="live-card__link" id="powerStatusLink" href="https://bezsvitla.com.ua/chernihivska-oblast/cherha-3-1" target="_blank" rel="noopener noreferrer">Відкрити повне джерело</a>
           </article>
 
-          <article class="live-card">
+          <article class="live-card" id="alertStatusCard">
             <div class="live-card__head">
               <span class="info-card__tag">Тривога</span>
-              <p class="live-card__source">Чернігівський район, орієнтир для с. Жавинка</p>
+              <p class="live-card__source">Чернігівська область, орієнтир для с. Жавинка</p>
             </div>
             <h3>Повітряна тривога</h3>
             <p class="live-card__status" id="alertStatusText">Завантаження актуального статусу…</p>
             <p class="live-card__meta" id="alertStatusMeta">Перевіряємо поточний стан для Чернігівського району.</p>
-            <a class="live-card__link" id="alertStatusLink" href="https://alarmmap.online/ua/atu/chernigivska-oblast/chernigivskij-rayon/air" target="_blank" rel="noopener noreferrer">Відкрити статус району</a>
+            <a class="live-card__link" id="alertStatusLink" href="https://ubilling.net.ua/aerialalerts/" target="_blank" rel="noopener noreferrer">Відкрити статус області</a>
           </article>
         </div>
 
@@ -153,9 +153,10 @@
             <span class="info-card__tag">Погода</span>
             <p class="live-card__source">Джерело: Open-Meteo, с. Жавинка / Чернігівський район</p>
           </div>
-          <h3>Прогноз на сьогодні та на 7 днів</h3>
+          <h3 id="weatherTitle">Прогноз на сьогодні та на 7 днів</h3>
           <div class="weather-layout">
             <div class="weather-today">
+              <p class="weather-today__label" id="weatherTodayLabel">Сьогодні</p>
               <p class="live-card__status" id="weatherToday">Завантаження погоди…</p>
               <p class="live-card__meta" id="weatherMeta">Оновлюємо дані для Жавинки.</p>
             </div>
@@ -164,7 +165,7 @@
         </article>
 
         <div class="live-grid live-grid--secondary">
-          <article class="live-card">
+          <article class="live-card" id="waterLevelCard">
             <div class="live-card__head">
               <span class="info-card__tag">Десна</span>
               <p class="live-card__source">Джерело: rubhoz.com, Чернігів</p>
@@ -175,7 +176,7 @@
             <a class="live-card__link" id="waterLevelLink" href="https://www.rubhoz.com/river/74/136" target="_blank" rel="noopener noreferrer">Відкрити джерело</a>
           </article>
 
-          <article class="live-card">
+          <article class="live-card" id="fishingForecastCard">
             <div class="live-card__head">
               <span class="info-card__tag">Рибалка</span>
               <p class="live-card__source">Джерело: rubhoz.com, прогноз для Чернігова</p>
@@ -366,22 +367,25 @@
 
         <div class="news-grid" id="newsGrid">
           <article class="news-card">
-            <span class="news-card__date">Полив</span>
+            <span class="news-card__date">10.06.2026 · Полив</span>
             <h3>2 бочки для поливу відремонтовано</h3>
             <p>У товаристві відремонтовано дві бочки для поливу. Просимо мешканців користуватися ними акуратно та повідомляти про нові несправності.</p>
           </article>
 
           <article class="news-card">
-            <span class="news-card__date">Безпека</span>
+            <span class="news-card__date">10.06.2026 · Безпека</span>
             <h3>Потрібно обрізати гілки біля електромереж</h3>
             <p>Просимо власників ділянок прибрати гілки, що виходять за межі території та нависають над проводами електромереж. Це питання безпеки для всіх мешканців.</p>
           </article>
 
           <article class="news-card">
-            <span class="news-card__date">Інформація</span>
+            <span class="news-card__date">10.06.2026 · Інформація</span>
             <h3>Актуальні сервіси на сайті</h3>
             <p>На сайті доступні графік поливу, автобусний розклад, тарифи, реквізити для оплати, подання показників, звернення до правління та онлайн-статус.</p>
           </article>
+        </div>
+        <div class="news-actions" id="newsActions" hidden>
+          <button class="button button--ghost" id="newsToggleButton" type="button">Показати більше</button>
         </div>
       </div>
     </section>

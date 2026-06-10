@@ -2,9 +2,14 @@
   var LIVE_STATUS_URL = 'data/live-status.json';
   var FORM_CONFIG_URL = 'data/form-config.json';
   var FEEDBACK_CONFIG_URL = 'data/feedback-config.json';
-  var WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=51.4478&longitude=31.25672&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FKyiv&forecast_days=7';
+  var WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=51.4478&longitude=31.25672&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FKyiv&forecast_days=7&past_days=6';
   var FEEDBACK_MESSAGE_SOURCE = 'st-gorizont-feedback';
   var SITE_DATA_CALLBACK_PREFIX = '__stGorizontSiteData__';
+  var NEWS_PREVIEW_LIMIT = 6;
+  var siteConfig = {
+    blocks: {},
+    media: {}
+  };
 
   var weatherCodes = {
     0: 'Ясно',
@@ -31,6 +36,7 @@
   };
 
   var dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  var weekDayNames = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'Пʼятниця', 'Субота'];
 
   function byId(id) {
     return document.getElementById(id);
@@ -38,7 +44,7 @@
 
   function setText(id, text) {
     var node = byId(id);
-    if (node) {
+    if (node && text !== undefined && text !== null && String(text).trim() !== '') {
       node.textContent = text;
     }
   }
@@ -57,6 +63,41 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  function buildYoutubeEmbedUrl(rawUrl) {
+    var value = String(rawUrl || '').trim();
+    if (!value) {
+      return '';
+    }
+
+    try {
+      var url = new URL(value, window.location.href);
+      var host = url.hostname.replace(/^www\./, '');
+      var videoId = '';
+
+      if (host === 'youtu.be') {
+        videoId = url.pathname.replace(/\//g, '');
+      } else if (host === 'youtube.com' || host === 'm.youtube.com') {
+        if (url.pathname === '/watch') {
+          videoId = url.searchParams.get('v') || '';
+        } else if (url.pathname.indexOf('/embed/') === 0) {
+          videoId = url.pathname.split('/embed/')[1] || '';
+        } else if (url.pathname.indexOf('/shorts/') === 0) {
+          videoId = url.pathname.split('/shorts/')[1] || '';
+        }
+      }
+
+      if (!videoId) {
+        return value;
+      }
+
+      return 'https://www.youtube.com/embed/' + encodeURIComponent(videoId) +
+        '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + encodeURIComponent(videoId) +
+        '&playsinline=1&modestbranding=1&rel=0';
+    } catch (error) {
+      return value;
+    }
   }
 
   function findOne(selector) {
@@ -101,6 +142,34 @@
       node.hidden = true;
       node.textContent = '';
     }
+  }
+
+  function setHidden(id, hidden) {
+    var node = byId(id);
+    if (node) {
+      node.hidden = !!hidden;
+    }
+  }
+
+  function isBlockEnabled(key) {
+    if (!Object.prototype.hasOwnProperty.call(siteConfig.blocks, key)) {
+      return true;
+    }
+    return siteConfig.blocks[key] !== false;
+  }
+
+  function parseBool(value, defaultValue) {
+    var normalized = String(value || '').trim().toLowerCase();
+    if (!normalized) {
+      return defaultValue;
+    }
+    if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'так') {
+      return true;
+    }
+    if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'ні') {
+      return false;
+    }
+    return defaultValue;
   }
 
   function ensureFeedbackTransportFrame() {
@@ -200,6 +269,20 @@
   function formatDay(dateString) {
     var date = new Date(dateString + 'T12:00:00');
     return dayNames[date.getDay()] + ', ' + String(date.getDate()).padStart(2, '0') + '.' + String(date.getMonth() + 1).padStart(2, '0');
+  }
+
+  function formatWeekDay(dateString) {
+    var date = new Date(dateString + 'T12:00:00');
+    return weekDayNames[date.getDay()];
+  }
+
+  function formatShortDate(dateString) {
+    var date = new Date(dateString + 'T12:00:00');
+    return String(date.getDate()).padStart(2, '0') + '.' + String(date.getMonth() + 1).padStart(2, '0');
+  }
+
+  function toIsoDate(date) {
+    return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
   }
 
   async function fetchJson(url) {
@@ -340,25 +423,103 @@
 
   function renderNews(items) {
     var node = byId('newsGrid');
-    if (!node || !items || !items.length) {
+    var actions = byId('newsActions');
+    var toggleButton = byId('newsToggleButton');
+    var expanded = false;
+
+    if (!node) {
       return;
     }
 
-    node.innerHTML = items.map(function (item) {
-      return (
-        '<article class="news-card">' +
-          '<span class="news-card__date">' + escapeHtml(item.category || '') + '</span>' +
-          '<h3>' + escapeHtml(item.title || '') + '</h3>' +
-          '<p>' + escapeHtml(item.text || '') + '</p>' +
-        '</article>'
-      );
-    }).join('');
+    if (!items || !items.length) {
+      node.innerHTML = '';
+      if (actions) actions.hidden = true;
+      return;
+    }
+
+    function renderNewsItems() {
+      var visibleItems = expanded ? items : items.slice(0, NEWS_PREVIEW_LIMIT);
+      node.innerHTML = visibleItems.map(function (item) {
+        var dateLabel = item.date ? escapeHtml(item.date) + ' · ' : '';
+        var categoryLabel = escapeHtml(item.category || '');
+        return (
+          '<article class="news-card">' +
+            '<span class="news-card__date">' + dateLabel + categoryLabel + '</span>' +
+            '<h3>' + escapeHtml(item.title || '') + '</h3>' +
+            '<p>' + escapeHtml(item.text || '') + '</p>' +
+          '</article>'
+        );
+      }).join('');
+
+      if (actions && toggleButton) {
+        actions.hidden = items.length <= NEWS_PREVIEW_LIMIT;
+        toggleButton.textContent = expanded ? 'Сховати' : 'Показати більше';
+      }
+    }
+
+    if (toggleButton && !toggleButton.dataset.bound) {
+      toggleButton.dataset.bound = 'true';
+      toggleButton.addEventListener('click', function () {
+        expanded = !expanded;
+        renderNewsItems();
+      });
+    }
+
+    renderNewsItems();
+  }
+
+  function applyMediaSettings() {
+    var heroVideo = findOne('.hero__video-embed');
+    var videoUrl = siteConfig.media.hero_video_url || '';
+
+    if (!heroVideo || !videoUrl) {
+      return;
+    }
+
+    heroVideo.src = buildYoutubeEmbedUrl(videoUrl);
+  }
+
+  function applyStaticBlockVisibility() {
+    setHidden('services', !isBlockEnabled('services'));
+    setHidden('live-status', !isBlockEnabled('live_status'));
+    setHidden('weather', !isBlockEnabled('weather'));
+    setHidden('watering', !isBlockEnabled('watering'));
+    setHidden('bus', !isBlockEnabled('bus'));
+    setHidden('rates', !isBlockEnabled('rates'));
+    setHidden('meter', !isBlockEnabled('meter'));
+    setHidden('feedback', !isBlockEnabled('feedback'));
+    setHidden('news', !isBlockEnabled('news'));
+    setHidden('contacts', !isBlockEnabled('contacts'));
+    refreshLiveStatusVisibility();
+  }
+
+  function refreshLiveStatusVisibility() {
+    var liveSection = byId('live-status');
+    if (!liveSection) {
+      return;
+    }
+
+    if (!isBlockEnabled('live_status')) {
+      liveSection.hidden = true;
+      return;
+    }
+
+    var visibleIds = ['powerStatusCard', 'alertStatusCard', 'weather', 'waterLevelCard', 'fishingForecastCard'];
+    var hasVisibleCard = visibleIds.some(function (id) {
+      var node = byId(id);
+      return node && !node.hidden;
+    });
+
+    liveSection.hidden = !hasVisibleCard;
   }
 
   function applySiteData(siteData) {
     if (!siteData) {
       return;
     }
+
+    siteConfig.blocks = siteData.blocks || {};
+    siteConfig.media = siteData.media || {};
 
     setText('siteTopStripText', getTextBlock(siteData, 'site', 'top_strip_text'));
     setText('siteContactLinkText', getTextBlock(siteData, 'site', 'contact_link_text'));
@@ -369,6 +530,8 @@
     setText('heroSecondaryButton', getTextBlock(siteData, 'hero', 'secondary_button_text'));
     setText('servicesEyebrow', getTextBlock(siteData, 'services', 'eyebrow'));
     setText('servicesTitle', getTextBlock(siteData, 'services', 'title'));
+    setText('liveStatusEyebrow', getTextBlock(siteData, 'live_status', 'eyebrow'));
+    setText('liveStatusTitle', getTextBlock(siteData, 'live_status', 'title'));
     setText('wateringEyebrow', getTextBlock(siteData, 'watering', 'eyebrow'));
     setText('wateringTitle', getTextBlock(siteData, 'watering', 'title'));
     setText('busEyebrow', getTextBlock(siteData, 'bus', 'eyebrow'));
@@ -382,11 +545,14 @@
     setText('meterTitle', getTextBlock(siteData, 'meter', 'title'));
     setText('meterText', getTextBlock(siteData, 'meter', 'text'));
     setText('meterFormButton', getTextBlock(siteData, 'meter', 'button_text'));
+    setText('meterFormHint', getTextBlock(siteData, 'meter', 'hint'));
     setText('feedbackEyebrow', getTextBlock(siteData, 'feedback', 'eyebrow'));
     setText('feedbackTitle', getTextBlock(siteData, 'feedback', 'title'));
     setText('feedbackText', getTextBlock(siteData, 'feedback', 'text'));
     setText('newsEyebrow', getTextBlock(siteData, 'news', 'eyebrow'));
     setText('newsTitle', getTextBlock(siteData, 'news', 'title'));
+    setText('weatherTitle', getTextBlock(siteData, 'weather', 'title'));
+    setText('weatherTodayLabel', getTextBlock(siteData, 'weather', 'today_label'));
     setText('contactsEyebrow', getTextBlock(siteData, 'contacts', 'eyebrow'));
     setText('contactsTitle', getTextBlock(siteData, 'contacts', 'title'));
     setText('contactsText', getTextBlock(siteData, 'contacts', 'text'));
@@ -401,6 +567,8 @@
     renderRates(siteData.rates || []);
     renderPaymentDetails(siteData.paymentDetails || []);
     renderNews(siteData.news || []);
+    applyMediaSettings();
+    applyStaticBlockVisibility();
   }
 
   function loadSiteDataJsonp(baseUrl) {
@@ -445,33 +613,60 @@
   }
 
   function applyLiveStatus(data) {
+    var hasVisibleLiveCards = false;
+
     if (!data) {
+      setHidden('live-status', true);
       return;
     }
 
     if (data.power) {
+      setHidden('powerStatusCard', !isBlockEnabled('power') || data.power.visible === false);
+      if (isBlockEnabled('power') && data.power.visible !== false) {
+        hasVisibleLiveCards = true;
+      }
       setText('powerStatusText', data.power.status || 'Немає даних');
       setText('powerStatusMeta', data.power.meta || 'Дані тимчасово недоступні.');
       setHref('powerStatusLink', data.power.sourceUrl);
     }
 
     if (data.alert) {
+      setHidden('alertStatusCard', !isBlockEnabled('alert') || data.alert.visible === false);
+      if (isBlockEnabled('alert') && data.alert.visible !== false) {
+        hasVisibleLiveCards = true;
+      }
       setText('alertStatusText', data.alert.status || 'Немає даних');
       setText('alertStatusMeta', data.alert.meta || 'Дані тимчасово недоступні.');
       setHref('alertStatusLink', data.alert.sourceUrl);
     }
 
     if (data.water) {
+      setHidden('waterLevelCard', !isBlockEnabled('water') || data.water.visible === false);
+      if (isBlockEnabled('water') && data.water.visible !== false) {
+        hasVisibleLiveCards = true;
+      }
       setText('waterLevelText', data.water.status || 'Немає даних');
       setText('waterLevelMeta', data.water.meta || 'Дані тимчасово недоступні.');
       setHref('waterLevelLink', data.water.sourceUrl);
     }
 
     if (data.fishing) {
+      setHidden('fishingForecastCard', !isBlockEnabled('fishing') || data.fishing.visible === false);
+      if (isBlockEnabled('fishing') && data.fishing.visible !== false) {
+        hasVisibleLiveCards = true;
+      }
       setText('fishingForecastText', data.fishing.status || 'Немає даних');
       setText('fishingForecastMeta', data.fishing.meta || 'Дані тимчасово недоступні.');
       setHref('fishingForecastLink', data.fishing.sourceUrl);
     }
+
+    setHidden('weather', !isBlockEnabled('weather'));
+    if (isBlockEnabled('weather')) {
+      hasVisibleLiveCards = true;
+    }
+
+    setHidden('live-status', !isBlockEnabled('live_status') || !hasVisibleLiveCards);
+    refreshLiveStatusVisibility();
   }
 
   async function loadLiveStatus() {
@@ -479,14 +674,11 @@
       var data = await fetchJson(LIVE_STATUS_URL);
       applyLiveStatus(data);
     } catch (error) {
-      setText('powerStatusText', 'Графік тимчасово недоступний');
-      setText('powerStatusMeta', 'Спробуйте відкрити офіційне джерело нижче.');
-      setText('alertStatusText', 'Статус тривоги тимчасово недоступний');
-      setText('alertStatusMeta', 'Спробуйте оновити сторінку трохи пізніше.');
-      setText('waterLevelText', 'Дані про рівень води тимчасово недоступні');
-      setText('waterLevelMeta', 'Спробуйте оновити сторінку трохи пізніше.');
-      setText('fishingForecastText', 'Прогноз для рибалки тимчасово недоступний');
-      setText('fishingForecastMeta', 'Спробуйте оновити сторінку трохи пізніше.');
+      setHidden('powerStatusCard', true);
+      setHidden('alertStatusCard', true);
+      setHidden('waterLevelCard', true);
+      setHidden('fishingForecastCard', true);
+      refreshLiveStatusVisibility();
     }
   }
 
@@ -541,30 +733,60 @@
         throw new Error('Missing daily forecast');
       }
 
+      var weatherByDate = {};
+      dates.forEach(function (date, index) {
+        weatherByDate[date] = {
+          date: date,
+          code: codes[index],
+          min: minTemps[index],
+          max: maxTemps[index],
+          precip: precip[index] || 0
+        };
+      });
+
+      var todayDate = new Date();
+      var todayIso = toIsoDate(todayDate);
+      var monday = new Date(todayDate);
+      var dayIndex = monday.getDay();
+      var offsetToMonday = dayIndex === 0 ? -6 : 1 - dayIndex;
+      monday.setDate(monday.getDate() + offsetToMonday);
+
+      var weekItems = [];
+      for (var i = 0; i < 7; i += 1) {
+        var weekDate = new Date(monday);
+        weekDate.setDate(monday.getDate() + i);
+        var iso = toIsoDate(weekDate);
+        if (weatherByDate[iso]) {
+          weekItems.push(weatherByDate[iso]);
+        }
+      }
+
       setText(
         'weatherToday',
         'Зараз ' + Math.round(current.temperature_2m) + '°C, ' + weatherLabel(current.weather_code)
       );
       setText(
         'weatherMeta',
-        'Сьогодні: від ' + Math.round(minTemps[0]) + '°C до ' + Math.round(maxTemps[0]) + '°C. Вітер ' +
+        'Сьогодні: від ' + Math.round(minTemps[dates.indexOf(todayIso)] || minTemps[0]) + '°C до ' +
+          Math.round(maxTemps[dates.indexOf(todayIso)] || maxTemps[0]) + '°C. Вітер ' +
           Math.round(current.wind_speed_10m || 0) + ' км/год.'
       );
 
-      daysNode.innerHTML = dates.map(function (date, index) {
+      daysNode.innerHTML = weekItems.map(function (item) {
+        var isToday = item.date === todayIso;
         return (
-          '<article class="weather-day">' +
-            '<strong>' + formatDay(date) + '</strong>' +
-            '<span>' + weatherLabel(codes[index]) + '</span>' +
-            '<span>' + Math.round(minTemps[index]) + '°C ... ' + Math.round(maxTemps[index]) + '°C</span>' +
-            '<span>Опади: ' + Math.round(precip[index] || 0) + '%</span>' +
+          '<article class="weather-day' + (isToday ? ' weather-day--today' : '') + '">' +
+            '<strong>' + formatWeekDay(item.date) + ', ' + formatShortDate(item.date) + '</strong>' +
+            '<span>' + weatherLabel(item.code) + '</span>' +
+            '<span>' + Math.round(item.min) + '°C ... ' + Math.round(item.max) + '°C</span>' +
+            '<span>Опади: ' + Math.round(item.precip || 0) + '%</span>' +
           '</article>'
         );
       }).join('');
     } catch (error) {
-      setText('weatherToday', 'Не вдалося завантажити прогноз погоди');
-      setText('weatherMeta', 'Перевірте підключення або оновіть сторінку пізніше.');
+      setHidden('weather', true);
       daysNode.innerHTML = '';
+      refreshLiveStatusVisibility();
     }
   }
 
