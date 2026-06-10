@@ -14,12 +14,14 @@ const SHEET_HEADERS = [
 ];
 
 function doOptions() {
-  return jsonResponse({ ok: true });
+  return htmlResponse_(true, 'ready', '');
 }
 
 function doPost(e) {
+  let payload = { requestId: '' };
+
   try {
-    const payload = parsePayload_(e);
+    payload = parsePayload_(e);
     validatePayload_(payload);
     guardSpam_(payload);
 
@@ -40,10 +42,14 @@ function doPost(e) {
     appendRow_(row);
     notifyTelegram_(payload);
 
-    return jsonResponse({ ok: true, message: 'accepted' });
+    return htmlResponse_(true, 'Повідомлення успішно відправлено.', payload.requestId);
   } catch (error) {
     logError_(error);
-    return jsonResponse({ ok: false, error: String(error && error.message ? error.message : error) }, 400);
+    return htmlResponse_(
+      false,
+      String(error && error.message ? error.message : error),
+      payload && payload.requestId ? payload.requestId : ''
+    );
   }
 }
 
@@ -61,7 +67,8 @@ function parsePayload_(e) {
     submittedAt: String(data.submittedAt || '').trim(),
     clientStartedAt: String(data.clientStartedAt || '').trim(),
     userAgent: String(data.userAgent || '').trim(),
-    ip: String(data.ip || '').trim()
+    ip: String(data.ip || '').trim(),
+    requestId: String(data.requestId || '').trim()
   };
 }
 
@@ -169,12 +176,34 @@ function notifyTelegram_(payload) {
   });
 }
 
-function jsonResponse(payload, statusCode) {
-  const output = ContentService
-    .createTextOutput(JSON.stringify(payload))
-    .setMimeType(ContentService.MimeType.JSON);
+function htmlResponse_(ok, message, requestId) {
+  const payload = {
+    source: 'st-gorizont-feedback',
+    ok: ok,
+    message: message,
+    requestId: requestId || ''
+  };
 
-  return output;
+  const html = `<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8">
+    <title>Feedback Response</title>
+  </head>
+  <body>
+    <script>
+      (function () {
+        var payload = ${JSON.stringify(payload)};
+        if (window.parent) {
+          window.parent.postMessage(payload, '*');
+        }
+      })();
+    </script>
+  </body>
+</html>`;
+
+  return HtmlService.createHtmlOutput(html)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function logError_(error) {

@@ -3,6 +3,7 @@
   var FORM_CONFIG_URL = 'data/form-config.json';
   var FEEDBACK_CONFIG_URL = 'data/feedback-config.json';
   var WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=51.4478&longitude=31.25672&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FKyiv&forecast_days=7';
+  var FEEDBACK_MESSAGE_SOURCE = 'st-gorizont-feedback';
 
   var weatherCodes = {
     0: 'Ясно',
@@ -61,6 +62,94 @@
       node.hidden = true;
       node.textContent = '';
     }
+  }
+
+  function ensureFeedbackTransportFrame() {
+    var frame = byId('feedbackTransportFrame');
+    if (frame) {
+      return frame;
+    }
+
+    frame = document.createElement('iframe');
+    frame.id = 'feedbackTransportFrame';
+    frame.name = 'feedbackTransportFrame';
+    frame.hidden = true;
+    frame.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(frame);
+    return frame;
+  }
+
+  function isTrustedFeedbackOrigin(origin) {
+    try {
+      var hostname = new URL(origin).hostname;
+      return hostname === 'script.google.com' || hostname === 'script.googleusercontent.com';
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function submitAppsScriptForm(webhookUrl, payload) {
+    return new Promise(function (resolve, reject) {
+      var frame = ensureFeedbackTransportFrame();
+      var requestId = 'feedback-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+      var timeoutId = null;
+
+      payload.requestId = requestId;
+
+      function cleanup() {
+        window.removeEventListener('message', onMessage);
+        if (timeoutId) {
+          window.clearTimeout(timeoutId);
+        }
+        if (transportForm.parentNode) {
+          transportForm.parentNode.removeChild(transportForm);
+        }
+      }
+
+      function onMessage(event) {
+        var data = event.data || {};
+
+        if (!isTrustedFeedbackOrigin(event.origin)) {
+          return;
+        }
+
+        if (data.source !== FEEDBACK_MESSAGE_SOURCE || data.requestId !== requestId) {
+          return;
+        }
+
+        cleanup();
+
+        if (data.ok) {
+          resolve(data);
+        } else {
+          reject(new Error(data.message || 'Не вдалося надіслати звернення.'));
+        }
+      }
+
+      var transportForm = document.createElement('form');
+      transportForm.method = 'POST';
+      transportForm.action = webhookUrl;
+      transportForm.target = frame.name;
+      transportForm.hidden = true;
+
+      Object.keys(payload).forEach(function (key) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = payload[key];
+        transportForm.appendChild(input);
+      });
+
+      document.body.appendChild(transportForm);
+      window.addEventListener('message', onMessage);
+
+      timeoutId = window.setTimeout(function () {
+        cleanup();
+        reject(new Error('Час очікування відповіді вичерпано.'));
+      }, 25000);
+
+      transportForm.submit();
+    });
   }
 
   function weatherLabel(code) {
@@ -274,11 +363,7 @@
 
       try {
         if (transport === 'apps-script') {
-          await fetch(webhookUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: new URLSearchParams(payload)
-          });
+          await submitAppsScriptForm(webhookUrl, payload);
         } else {
           var response = await fetch(webhookUrl, {
             method: 'POST',
@@ -299,7 +384,9 @@
         note.textContent = 'Повідомлення успішно відправлено.';
       } catch (error) {
         note.hidden = false;
-        note.textContent = 'Не вдалося відправити звернення. Спробуйте пізніше.';
+        note.textContent = error && error.message
+          ? error.message
+          : 'Не вдалося відправити звернення. Спробуйте пізніше.';
       } finally {
         submit.disabled = false;
       }
