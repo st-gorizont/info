@@ -98,6 +98,18 @@
       setText('alertStatusMeta', data.alert.meta || 'Дані тимчасово недоступні.');
       setHref('alertStatusLink', data.alert.sourceUrl);
     }
+
+    if (data.water) {
+      setText('waterLevelText', data.water.status || 'Немає даних');
+      setText('waterLevelMeta', data.water.meta || 'Дані тимчасово недоступні.');
+      setHref('waterLevelLink', data.water.sourceUrl);
+    }
+
+    if (data.fishing) {
+      setText('fishingForecastText', data.fishing.status || 'Немає даних');
+      setText('fishingForecastMeta', data.fishing.meta || 'Дані тимчасово недоступні.');
+      setHref('fishingForecastLink', data.fishing.sourceUrl);
+    }
   }
 
   async function loadLiveStatus() {
@@ -109,6 +121,10 @@
       setText('powerStatusMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
       setText('alertStatusText', 'Немає локальних даних про тривогу');
       setText('alertStatusMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
+      setText('waterLevelText', 'Немає локальних даних про рівень води');
+      setText('waterLevelMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
+      setText('fishingForecastText', 'Немає локальних даних про прогноз рибалки');
+      setText('fishingForecastMeta', 'Оновлення блоку буде працювати після публікації JSON у репозиторії.');
     }
   }
 

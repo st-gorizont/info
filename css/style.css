@@ -548,6 +548,10 @@ section {
   gap: 18px;
 }
 
+.live-grid--secondary {
+  margin-top: 18px;
+}
+
 .live-card {
   padding: 26px;
   border: 1px solid var(--line);
