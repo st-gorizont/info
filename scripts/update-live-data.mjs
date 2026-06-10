@@ -3,12 +3,11 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
 const POWER_URL = 'https://bezsvitla.com.ua/chernihivska-oblast/cherha-3-1';
-const ALERT_URL = 'https://ubilling.net.ua/aerialalerts/?source=klimenko&raw';
+const ALERT_URL = 'https://ubilling.net.ua/aerialalerts/';
 const ALERT_MAP_URL = 'https://map.ukrainealarm.com/';
 const WATER_URL = 'https://www.rubhoz.com/river/74/136';
 const FISHING_URL = 'https://www.rubhoz.com/ua/prognoz-kleva-chernigiv';
-const ALERT_OBLAST = 'Чернігівська область';
-const ALERT_RAYON  = 'Чернігівський район';
+const ALERT_REGION = 'Чернігівська область';
 const execFileAsync = promisify(execFile);
 
 function cleanText(text) {
@@ -148,31 +147,27 @@ function parsePower(html) {
 }
 
 function parseAlert(data) {
-  const oblast = data?.raw?.[ALERT_OBLAST];
-  const rayon  = oblast?.districts?.[ALERT_RAYON];
-  const cacheAt = data?.cachedat ?? '';
+  const region = data && data.states ? data.states[ALERT_REGION] : null;
+  const cacheAt = data && data.cachedat ? data.cachedat : '';
 
-  if (!oblast) {
-    throw new Error(`Oblast not found in alert feed: ${ALERT_OBLAST}`);
-  }
-  if (!rayon) {
-    throw new Error(`Rayon not found in alert feed: ${ALERT_RAYON}`);
+  if (!region) {
+    throw new Error(`Region not found in alert feed: ${ALERT_REGION}`);
   }
 
+  const changedLabel = region.changed ? `Остання зміна: ${region.changed}.` : '';
   const cacheLabel = cacheAt ? ` Оновлено у джерелі: ${cacheAt}.` : '';
-  const changedLabel = rayon.enabled_at ? ` Тривога з: ${rayon.enabled_at}.` : '';
 
-  if (rayon.enabled) {
+  if (region.alertnow) {
     return visibleCard(
       'Повітряна тривога оголошена',
-      `${ALERT_RAYON}, ${ALERT_OBLAST}. Орієнтир для с. Жавинка.${changedLabel}${cacheLabel}`.trim(),
+      `Чернігівська область, орієнтир для с. Жавинка. ${changedLabel}${cacheLabel}`.trim(),
       ALERT_MAP_URL
     );
   }
 
   return visibleCard(
     'Повітряної тривоги немає',
-    `${ALERT_RAYON}, ${ALERT_OBLAST}. Орієнтир для с. Жавинка.${cacheLabel}`.trim(),
+    `Чернігівська область, орієнтир для с. Жавинка. ${changedLabel}${cacheLabel}`.trim(),
     ALERT_MAP_URL
   );
 }
