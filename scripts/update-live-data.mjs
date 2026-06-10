@@ -4,6 +4,7 @@ import { promisify } from 'node:util';
 
 const POWER_URL = 'https://bezsvitla.com.ua/chernihivska-oblast/cherha-3-1';
 const ALERT_URL = 'https://ubilling.net.ua/aerialalerts/';
+const ALERT_MAP_URL = 'https://map.ukrainealarm.com/';
 const WATER_URL = 'https://www.rubhoz.com/river/74/136';
 const FISHING_URL = 'https://www.rubhoz.com/ua/prognoz-kleva-chernigiv';
 const ALERT_REGION = 'Чернігівська область';
@@ -160,14 +161,14 @@ function parseAlert(data) {
     return visibleCard(
       'Повітряна тривога оголошена',
       `Чернігівська область, орієнтир для с. Жавинка. ${changedLabel}${cacheLabel}`.trim(),
-      ALERT_URL
+      ALERT_MAP_URL
     );
   }
 
   return visibleCard(
     'Повітряної тривоги немає',
     `Чернігівська область, орієнтир для с. Жавинка. ${changedLabel}${cacheLabel}`.trim(),
-    ALERT_URL
+    ALERT_MAP_URL
   );
 }
 
@@ -263,7 +264,7 @@ async function main() {
     ALERT_URL,
     fetchJson,
     parseAlert,
-    hiddenCard('Статус тривоги недоступний', 'Не вдалося отримати актуальний статус тривоги.', ALERT_URL),
+    hiddenCard('Статус тривоги недоступний', 'Не вдалося отримати актуальний статус тривоги.', ALERT_MAP_URL),
     debug
   );
 
